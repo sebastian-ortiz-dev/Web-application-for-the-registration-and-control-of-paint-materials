@@ -1,0 +1,2 @@
+# Web-application-for-the-registration-and-control-of-paint-materials
+This application was developed as my Final Graduation Project for my Associate Degree (TSU) in Computer Science, where it was awarded a 95/100 grade for its architectural integrity and database optimization.  It is a modular web application designed to solve complex inventory control logic, focusing on high performance and data reliability
