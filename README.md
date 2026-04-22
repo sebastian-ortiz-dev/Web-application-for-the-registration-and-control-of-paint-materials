@@ -29,5 +29,14 @@ Containerization: Use the provided Dockerfile and docker-compose.yml to spin up 
 # Quick Start
 docker-compose up --build
 
+Environment Variable Configuration
+The project uses an .env file to manage database credentials and security keys.
+
+Rename the .env.example file to .env.
+
+Load your own credentials (DB_USER, DB_PASSWORD, etc.).
+
+The system is now ready to run with Docker Compose.
+
 A Note on Communication & Growth
 I am a Venezuelan developer currently at a B1/B2 English level. This project served not only as a technical challenge but also as a practice ground for my professional English writing. While my earlier commits in other versions were in Spanish, this repository reflects my commitment to mastering English for the global tech market.
