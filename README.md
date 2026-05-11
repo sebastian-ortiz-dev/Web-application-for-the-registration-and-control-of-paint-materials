@@ -1,12 +1,42 @@
-The reason of this proyect is for my thesis in a technical superior in computer science, the other reason is for test my abilitys using a micro-framework 
-and how build a application web that resolves something real, the firts technology that use was flask, in the DB I use postgreSQL using only query SQL
-without a ORM, because for my is easy optimize the querys and I like see who data bring of the DB, for the CSS that always take me more than the Back-end
-so for this ocasion I use tailwindcss (before of write this I did read about the problem that has tailwindcss), if someone look that my writing is very
-akward is cause I am a student of english in reality I am venezuelan, but try of improve my english for get a job in a future, the more probably is that never 
-put this repo publi because I left many stuff of security in the commits, so if you are reading is because I did it other repo with the same project but without
-keys, well I hope that whe presentate this don't gonna be a disaster.
+# Web-application-for-the-registration-and-control-of-paint-materials
+This project was developed as my Graduation Thesis for my Associate Degree (TSU) in Computer Science. The goal was twofold: to solve a real-world inventory problem and to push my limits using a micro-framework to build a robust, production-ready web application.
 
-I don't know why everyone the repos has commits that tell us about their lives, I see that very akward, well the next time that I gonna to read this be when 
-I dominate my english and I don't have problems (I am doing the same that those people that write all his live) and when I get a job, when i started whith 
-git the firts commits were in spanish well this I did it like a practice of my writing so see ya
+Technical Philosophy: Why Raw SQL?
+Unlike many modern applications that rely on ORMs, I made the conscious decision to use Raw SQL with PostgreSQL.
 
+Control & Visibility: I prefer to see exactly how data is being fetched and manipulated.
+
+Optimization: Writing manual queries allows for fine-tuned performance that ORMs often abstract away.
+
+Systematic Approach: It ensures a deeper understanding of the relational schema and data integrity.
+
+The Tech Stack
+Backend: Python with Flask. I utilized Flask Blueprints to maintain a modular, clean, and scalable architecture.
+
+Database: PostgreSQL (Strictly Raw SQL).
+
+Frontend: Tailwind CSS. Chosen to streamline the UI development process and ensure a modern, responsive design without sacrificing performance.
+
+Infrastructure: Docker. The project is fully containerized for consistent deployment.
+
+Project Structure & Deployment
+This repository is a "clean" version of the original development. To protect security, all sensitive keys and history from the initial commits were purged and modularized.
+
+Database Schema: Included in the /database directory.
+
+Containerization: Use the provided Dockerfile and docker-compose.yml to spin up the environment.
+
+# Quick Start
+docker-compose up --build
+
+Environment Variable Configuration
+The project uses an .env file to manage database credentials and security keys.
+
+Rename the .env.example file to .env.
+
+Load your own credentials (DB_USER, DB_PASSWORD, etc.).
+
+The system is now ready to run with Docker Compose.
+
+A Note on Communication & Growth
+I am a Venezuelan developer currently at a B1/B2 English level. This project served not only as a technical challenge but also as a practice ground for my professional English writing. While my earlier commits in other versions were in Spanish, this repository reflects my commitment to mastering English for the global tech market.
