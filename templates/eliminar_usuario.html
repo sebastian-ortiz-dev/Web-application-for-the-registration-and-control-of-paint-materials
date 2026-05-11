@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+    <link href="/static/img/icono/pintuplomer_logo.ico" rel="shortcut icon" />
+</head>
+<body class="bg-slate-100 flex">
+
+    {% include 'components/navegacion.html' %}
+
+    <div class="w-full ml-96 p-4">
+      <div class="flex items-center space-x-2 mb-4 justify-end">
+        <p class="text-xl font-bold">{{ nombre }}</p>
+        <img src="{{ url_for('static', filename='img/perfil/' + imagen) }}" class="w-17 rounded-full">
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flex flex-col space-y-2">
+            {% for message in messages %}
+              <p class="bg-red-200 text-red-800 p-2 mt-3 rounded-md text-center text-xl mb-2">{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div>
+          <h1 class="text-center mb-10 text-2xl text-slate-800">Eliminar Usuario</h1> 
+          <form class="bg-white mx-[270px] border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl" action="{{ url_for('usuario.delete_usuario', id=usuario[0]) }}" onsubmit="return confirmar()" method="POST" enctype="multipart/form-data">
+              <label class="font-medium text-gray-700 text-xl">Imagen:</label> <br>
+              <img src="{{ url_for('static', filename='img/perfil/' + usuario[4] ) }}" alt="Foto actual" class="w-65 h-55 border rounded-xl ml-35">
+              <label for="nombre" class="text-xl font-medium text-gray-700 ">Nombre de usuario:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" name="nombre" id="nombre" placeholder="Nombre de usuario" value="{{ usuario[1] }}" readonly/> <br>
+              <label for="contraseña" class="text-xl font-medium text-gray-700">Contraseña:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" id="contraseña" name="contraseña" value="{{ usuario[2] }}" placeholder="Contraseña del usuario" readonly> <br>
+              <label for="nivel_seleccionado" class="text-xl font-medium text-gray-700">Nivel de acceso:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="text" id="nivel_seleccionado" name="nivel_seleccionado" value="{{ usuario[7] }}" readonly> <br> 
+              <button type="submit" class="bg-red-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-red-600 mb-2" >Eliminar usuario</button>
+          </form>
+      </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/confirmacion.js') }}"></script>
+</body>
+</html>

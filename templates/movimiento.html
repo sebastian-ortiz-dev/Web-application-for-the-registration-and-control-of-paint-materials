@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+    <link href="/static/img/icono/pintuplomer_logo.ico" rel="shortcut icon" />
+</head>
+<body class="bg-slate-100 flex">
+    
+  {% include 'components/navegacion_if.html' %}
+
+     <div class="w-full ml-96 p-4">
+      <div class="flex items-center space-x-2 mb-4 justify-end">
+        <p class="text-xl font-bold">{{ nombre }}</p>
+        <img src="{{ url_for('static', filename='img/perfil/' + imagen) }}" class="w-17 rounded-full">
+      </div>
+                
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flex flex-col space-y-2">
+          {% for message in messages %}
+            <p class="bg-blue-200 text-blue-800 p-2 mt-3 rounded-md text-center text-xl mb-2">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="mt-2 bg-white rounded-md "> 
+        <h1 class="text-xl  ml-5 text-center mb-4 pt-2">Elija el tipo de movimiento que hara: </h1>
+        <label for="movimiento" class="text-xl font-medium text-gray-700 ml-5">Seleccione el movimiento:</label>
+        {% if movimiento %}
+          <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm " id="movimiento" name="movimiento" onchange="cambio()">
+            <option value="">-- Elige una opción --</option>
+            {% for movimientos in movimiento %}
+              <option value="{{ movimientos[0] }}">{{ movimientos[1] }}</option>
+            {% endfor %}
+            </select> <br> <br>
+        {% endif %}
+    </div>
+
+    <div class="my-5"> 
+      <div id="1" class="formulario-movimiento" style="display: none;">
+        <div class="bg-white mx-[270px] border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl"> 
+          <h2 class="text-center mb-3 text-2xl text-slate-800">Entrada de Productos</h2>
+          <label for="producto_entrada" class="text-xl font-medium text-gray-700 ">Tipo de Producto:</label>
+          <select id="tipo" name="tipo" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mb-1" onchange="formu()"> 
+            <option value="">-- Elige una opción --</option>
+            <option value="Existente">Existente</option>
+            <option value="Nuevo">Nuevo</option>
+          </select> <br>
+          <div style="display: none;" id="existente_producto">
+            <form action="{{url_for('movimiento.registrar_entrada')}}" method="POST"  enctype="multipart/form-data">
+              <label for="producto" class="text-xl font-medium text-gray-700" >Producto:</label>
+              <select id="producto" name="producto" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm" > 
+                <option value="">-- Elige un producto --</option>
+                {% for producto in productos %}
+                  <option value="{{ producto[0] }}">{{ producto[0] }}.{{ producto[1] }}</option>
+                {% endfor %}
+              </select> <br>
+              <label for="cantidad_entrada" class="text-xl font-medium text-gray-700 ">Cantidad:</label> <br>
+              <input type="number" id="cantidad_entrada" name="cantidad_entrada" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm " required> <br> 
+              <button type="submit" class="bg-green-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-green-600 mb-2 mt-2">Registrar Entrada</button>
+            </form>
+          </div>
+          <div style="display: none;" id="nuevo_producto">
+            <form action="{{url_for('movimiento.registrar_entrada_no_existente') }}" method="POST"  enctype="multipart/form-data">
+              <label for="imagen" class="font-medium text-gray-700 text-xl">Imagen:</label> <br>
+              <input type="file" name="imagen" id="imagen" required/> <br>
+              <label for="nombre" class="text-xl font-medium text-gray-700 ">Nombre del producto:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" name="nombre" id="nombre" placeholder="Nombre del producto" required/> <br>
+              <label for="detalles" class="text-xl font-medium text-gray-700">Descripcion:</label> <br>
+              <textarea class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " rows="4" cols="50" id="detalles" name="detalles" placeholder="Descripcion del producto" required></textarea> <br>
+              <label for="precio" class="text-xl font-medium text-gray-700">Precio:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="number" id="precio" name="precio" placeholder="Precio del producto" required> <br>
+              <label for="existencia" class="text-xl font-medium text-gray-700">Cantidad:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="number" id="existencia" name="existencia" placeholder="Cantidad en existencia" required> <br> 
+              <label for="minimo" class="text-xl font-medium text-gray-700">Cantidad minima:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-65" type="number" id="minimo" name="minimo" placeholder="Cantidad minima del producto" required> <br> 
+              <label for="categoria" class="text-xl font-medium text-gray-700 mt-1 mb-1">Categoria:</label>
+              <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mt-1 mb-1" id="categoria" name="categoria" >
+              <option value="">--- Elige una Categoria ---</option>
+              {% for categoria in categorias %}
+                <option value="{{ categoria[0] }}">{{ categoria[1] }}</option>
+              {% endfor %}
+              </select> <br> 
+              <label for="medida" class="text-xl font-medium text-gray-700 mt-1 mb-1">Medida:</label>
+              <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mt-1 mb-1" id="medida" name="medida" >
+              <option value="">--- Elige una Medida ---</option>
+              {% for medida in medidas %}
+                <option value="{{ medida[0] }}">{{ medida[1] }}</option>
+              {% endfor %}
+              </select> <br> 
+              <label for="distribuidor" class="text-xl font-medium text-gray-700">Seleccione un distribuidor:</label>
+              {% if distribuidores %}
+                <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm " id="distribuidor" name="distribuidor">
+                <option value="">--- Elige un proveedor ---</option>
+                {% for distribuidor in distribuidores %}
+                  <option value="{{ distribuidor[0] }}">{{ distribuidor[1] }}</option>
+                {% endfor %}
+                </select> <br> 
+              {% endif %}
+              <button type="submit" class="bg-green-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-green-600 mb-2 mt-2">Registrar Entrada</button>
+            </form>
+          </div>          
+        </div>
+      </div>
+            
+      <div id="2" class="formulario-movimiento" style="display: none;">
+        <form action="{{url_for('movimiento.registrar_salida') }}" method="POST" class="bg-white mx-[270px] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
+          <h2 class="text-center mb-3 text-2xl text-slate-800">Salida de Productos</h2>
+          <label for="producto" class="text-xl font-medium text-gray-700 ">Producto:</label>
+          <select id="producto" name="producto" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm ">
+            <option value="">-- Elige un producto --</option>
+            {% for producto in productos %}
+              <option value="{{ producto[0] }}">{{ producto[1] }}</option>
+            {% endfor %}
+          </select> <br>
+          <label for="cantidad_salida" class="text-xl font-medium text-gray-700 ">Cantidad:</label> <br>
+          <input type="number" id="cantidad_salida" name="cantidad_salida" class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " required> <br> 
+          <button type="submit" class="bg-red-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-red-600 mb-2">Registrar Salida</button> 
+        </form>
+      </div>
+
+      <div id="3" class="formulario-movimiento" style="display: none;">
+        <form action="{{url_for('movimiento.registrar_devolucion') }}" method="POST" class="bg-white mx-[270px] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
+          <h2 class="text-center mb-3 text-2xl text-slate-800">Devolucion de Producto</h2>
+          <label for="producto" class="text-xl font-medium text-gray-700 ">Producto:</label>
+          <select id="producto" name="producto" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm">
+            <option value="">-- Elige un producto --</option>
+            {% for producto in productos %}
+              <option value="{{ producto[0] }}">{{ producto[1] }}</option>
+            {% endfor %}
+          </select> <br>
+          <label for="tipo" class="text-xl font-medium text-gray-700 ">Tipo de Devolucion:</label>
+          <select id="tipo" name="tipo" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mb-1"> 
+            <option value="">-- Elige una opción --</option>
+            <option value="1">A Proveedor</option>
+            <option value="2">De Cliente</option> 
+          </select> <br>
+          <label for="cantidad_devolucion" class="text-xl font-medium text-gray-700 ">Cantidad:</label> <br>
+          <input type="number" id="cantidad_devolucion" name="cantidad_devolucion" class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " required> <br> 
+          <label for="motivo" class="text-xl font-medium text-gray-700">Motivo de la devolucion:</label> <br>
+          <textarea id="motivo" name="motivo" class="pl-2 my-2 bg-slate-100 rounded-sm" rows="4" cols="50" required></textarea> <br> <br>
+          <button type="submit" class="bg-green-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-green-600 mb-2">Registrar Devolucion</button> 
+        </form>
+      </div>
+
+      <div id="4" class="formulario-movimiento" style="display: none;">
+        <form action="{{url_for('movimiento.registrar_Ajuste') }}" method="POST" class="bg-white mx-[270px] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
+          <h2 class="text-center mb-3 text-2xl text-slate-800">Ajuste de Producto</h2>
+          <label for="producto" class="text-xl font-medium text-gray-700 ">Producto:</label>
+          <select id="producto" name="producto" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm ">
+            <option value="">-- Elige una opción --</option>
+            {% for producto in productos %}
+              <option value="{{ producto[0] }}">{{ producto[1] }}</option>
+            {% endfor %}
+          </select> <br>
+          <label for="tipo" class="text-xl font-medium text-gray-700 ">Tipo de Ajuste:</label>
+          <select id="tipo" name="tipo" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mb-1"> 
+            <option value="">-- Elige una opción --</option>
+            <option value="2">Aumentar Stock</option>
+            <option value="1">Disminuir Stock</option> 
+          </select> <br>
+          <label for="cantidad_ajuste" class="text-xl font-medium text-gray-700 ">Cantidad:</label> <br>
+          <input type="number" id="cantidad_ajuste" name="cantidad_ajuste" class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " required> <br> 
+          <button type="submit" class="bg-green-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-green-600 mb-2">Registrar Ajuste</button> 
+        </form>
+      </div>
+    </div>
+
+  </div>
+<script src="{{ url_for('static', filename='js/formularios.js') }}"></script>
+</body>
+</html>

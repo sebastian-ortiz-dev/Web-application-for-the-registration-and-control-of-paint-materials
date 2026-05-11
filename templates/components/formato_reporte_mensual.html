@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer - Reporte Mensual</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0.5cm;
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        #cabezero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa; 
+            padding: 20px;
+            border-bottom: 3px solid #333;
+            margin-bottom: 5px;
+        }
+
+        #cabezero h1 {
+            font-size: 24pt;
+            letter-spacing: 2px;
+        }
+
+        #cabezero h2 {
+            font-size: 14pt;
+            color: #666;
+        }
+
+        section {
+            margin-bottom: 5px;
+        }
+
+        section h2 {
+            font-size: 11pt;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .resumen-valor {
+            display: flex;
+            gap: 20px;
+        }
+
+        .caja-valor {
+            text-align: right;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            min-width: 150px;
+        }
+
+        .caja-valor p:first-child {
+            font-size: 8pt;
+            color: #777;
+            margin: 0;
+        }
+
+        .caja-valor p:last-child {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 5px 0 0 0;
+        }
+
+        .grid-cuadros {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .cuadro {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .cuadro-alerta {
+            border: 2px solid #333;
+            background-color: #fcfcfc;
+        }
+
+        .cuadro p:first-child {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #777;
+            margin-bottom: 5px;
+            padding-top: 5px;
+        }
+
+        .cuadro p:nth-child(2) {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 0;
+            padding-top: 5px;
+        }
+
+        .detalle-analisis {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Courier', monospace;
+            font-size: 10pt;
+            background-color: #fafafa;
+            border: 1px dashed #ccc;
+            padding: 12px;
+            margin-top: 2px;
+        }
+
+        .seccion-final {
+            margin-top: 30px;
+        }
+
+        .contenedor-firmas {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+        }
+
+        .firma {
+            width: 200px;
+            border-top: 1px solid #333;
+            text-align: center;
+            font-size: 9pt;
+            font-weight: bold;
+            padding-top: 5px;
+        }
+
+        .metadata {
+            margin-top: 5px;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <section id="cabezero">
+            <div>
+                <h1>INVERSIONES PINTUPLOMER C.A</h1>
+                <h2>Resumen Mensual de Inventario</h2>
+                <p style="font-size: 10pt; color: #666; margin-top: 5px;">Mes de Reporte: {{ mes }} {{ anio }}</p>
+            </div>
+            <div class="resumen-valor">
+                <div class="caja-valor">
+                    <p>Saldo Inicial Mes</p>
+                    <p>Bs.{{ saldo_inicial }}</p>
+                </div>
+                <div class="caja-valor">
+                    <p>Cierre Inventario Final</p>
+                    <p>Bs.{{ valor_final[0][0] }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Análisis de Disponibilidad y Eficiencia</h2>
+            <div class="grid-cuadros">
+                <div class="cuadro cuadro-alerta">
+                    <p>PRODUCTOS EN STOCK CRÍTICO</p>
+                    <p>{{ critico[0][0] }}</p>
+                    <p style="font-size: 8pt; margin-top: 5px;">Requieren reposición</p>
+                </div>
+                <div class="cuadro">
+                    <p>PRODUCTOS SIN MOVIMIENTO</p>
+                    <p>{{ sin_movimiento[0][0] }}</p>
+                    <p style="font-size: 8pt; margin-top: 5px;">Valor Inmovilizado: Bs.{{ cantidad_sin_movimiento[0][0] }}</p>
+                </div>
+                <div class="cuadro">
+                    <p>ÍNDICE DE ROTACIÓN</p>
+                    <p>{{ rotacion_indice }}%</p>
+                    <p style="font-size: 8pt; margin-top: 5px;">Flujo de Inventario del mes</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Acumulado de Movimientos Mensuales</h2>
+            <div class="grid-cuadros">
+                <div class="cuadro">
+                    <p>TOTAL ENTRADAS</p>
+                    <p>{{cantidad_entradas[0][0]}}</p>
+                    <p style="margin-top: 2px;">Monto: Bs.{{ entradas[0][0] }}</p>
+                </div>
+                <div class="cuadro">
+                    <p>TOTAL SALIDAS (VENTAS)</p>
+                    <p>{{cantidad_salidas[0][0]}}</p>
+                    <p style="margin-top: 2px;">Monto: Bs.{{ salidas[0][0] }}</p>
+                </div>
+                <div class="cuadro">
+                    <p>TOTAL AJUSTES</p>
+                    <p>{{ cantidad_ajustes[0][0] }}</p>
+                    <p style="margin-top: 5px; font-size: 8pt;">Aumentos: Bs.{{ aumento[0][0] }}</p>
+                    <p style="font-size: 8pt;">Disminuciones: Bs.{{ disminucion[0][0] }}</p>
+                </div>
+                <div class="cuadro">
+                    <p>DEVOLUCIONES</p>
+                    <p>{{ cantidad_devoluciones[0][0] }}</p>
+                    <p>Monto: Bs.{{ devolucion[0][0] }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion-final">
+            <p><strong>Observaciones:</strong> _____________________________________________________________________________________________________</p>
+            
+            <div class="contenedor-firmas">
+                <div class="firma">Responsable de Almacén</div>
+                <div class="firma">Administración</div>
+            </div>
+
+            <div class="metadata">
+                <p>Inversiones Pintuplomer C.A - Reporte Consolidado Mensual</p>
+                <p>Fecha: {{ fecha_actual }} | Hora: {{ hora }} | Perfil: {{ perfil[0] }}</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

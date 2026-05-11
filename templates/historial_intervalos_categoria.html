@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+    <link href="/static/img/icono/pintuplomer_logo.ico" rel="shortcut icon" />
+</head>
+<body class="bg-slate-100 flex">
+    
+    {% include 'components/navegacion_if.html' %}
+
+     <div class="w-full ml-96 p-4">
+      <div class="flex items-center space-x-2 mb-4 justify-end">
+        <p class="text-xl font-bold">{{ nombre }}</p>
+        <img src="{{ url_for('static', filename='img/perfil/' + imagen) }}" class="w-17 rounded-full">
+      </div>
+
+    <div class="flex items-center bg-white h-14 rounded-sm shadow-md">
+      <form action="{{ url_for('historial.historial_busqueda_intervalo_categoria') }}" method="get">
+        <div class="flex">
+          <input type="text" name="buscar" id="buscar" class="ml-2 h-8 w-[460px] bg-gray-100 shadow-sm pl-4 rounded-xl" placeholder="Buscar una entrada">
+          <input type="hidden" name="desde" id="desde" value="{{ desde }}"/>
+          <input type="hidden" name="hasta" id="hasta" value="{{ hasta }}"/>
+          <input type="hidden" name="categoria" id="categoria" value="{{ categoria }}"/>
+          <button type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6 h-6 hover:text-slate-300 mt-0.5 ml-1 cursor-pointer" fill="currentColor">
+              <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+            </svg> 
+          </button>
+        </div>
+      </form>
+      <form action="{{ url_for('historial.historial_intervalo_categoria') }}" method="get">
+        <div class="flex">
+            <input type="hidden" name="categoria" id="categoria" value="{{ categoria }}"/>
+            <label for="desde" class="ml-2 mt-1">Desde: </label>
+            <input type="date" name="desde" id="desde" class="ml-1 h-8 bg-gray-100 shadow-sm pl-4 rounded-xl" placeholder="Desde">
+            <label for="hasta" class="ml-3 mt-1">Hasta: </label>
+            <input type="date" name="hasta" id="hasta" class="ml-1 h-8 bg-gray-100 shadow-sm pl-4 rounded-xl" placeholder="Hasta">
+            <button type="submit">
+              <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6 h-6 mt-0.5 ml-2 hover:text-slate-300 cursor-pointer" fill="currentColor">
+                <path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/>
+              </svg> 
+            </button>
+        </div>
+      </form>
+      <div class="relative">
+        <div id="cabezero" name="cabezero" class="flex ml-2 cursor-pointer border border-gray-300 p-1 rounded-xl w-31 hover:shadow-md" onclick="mostrar_lista()">Listar por .... 
+          <svg id="flecha" xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-4 h-4 inline-block mt-1 ml-3 transition-transform duration-300 " fill="currentColor">
+            <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/>
+          </svg> 
+        </div>
+        <div id="lista" name="lista" class="absolute w-full top-full border border-gray-300 bg-white z-50 mt-1 rounded-sm text-gray-700" style="display: none;">
+          <a class="cursor-pointer block hover:bg-gray-200 pl-3 mt-0.5" href="{{ url_for('historial.historial_movimientos') }}">Hoy</a>
+          <a class="cursor-pointer block hover:bg-gray-200 pl-3 " href="{{ url_for('historial.historial_movimientos_filtro', categoria=5) }}">Ultimos 7 dias</a>
+          <a class="cursor-pointer block hover:bg-gray-200 pl-3 " href="{{ url_for('historial.historial_movimientos_filtro', categoria=6) }}">Este mes</a>
+          <a class="cursor-pointer block hover:bg-gray-200 pl-3 " href="{{ url_for('historial.historial_movimientos_filtro', categoria=1) }}">Entrada</a>
+          <a class="cursor-pointer block hover:bg-gray-200 pl-3 " href="{{ url_for('historial.historial_movimientos_filtro', categoria=2) }}">Salida</a>
+          <a class="cursor-pointer block hover:bg-gray-200 pl-3 " href="{{ url_for('historial.historial_movimientos_filtro', categoria=3) }}">Devolucion</a>
+          <a class="cursor-pointer block hover:bg-gray-200 pl-3 mb-0.5" href="{{ url_for('historial.historial_movimientos_filtro', categoria=4) }}">Ajuste</a>
+        </div>
+      </div>
+    </div>
+                
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flex flex-col space-y-2">
+          {% for message in messages %}
+            <p class="bg-green-200 text-green-800 p-2 mt-3 rounded-md text-center text-xl mb-2">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if movimiento %}
+        {% for movimientos in movimiento %}
+            <div class="bg-white p-3 px-5 rounded-lg shadow-md m-5 hover:shadow-2xl">
+            <div>
+                <h3 class="text-xl font-semibold mb-1">Motivo: {{ movimientos[5] }}</h3>
+                <p class="text-gray-500 mb-1">ID Del Registro: {{ movimientos[0] }}</p>
+                <p class="text-gray-500 mb-1">ID Del Producto: {{ movimientos[1] }}</p>
+                <p class="text-gray-500 mb-1">Nombre Del Producto: {{ movimientos[6] }}</p>
+                <p class="text-gray-800 font-bold mb-1">cantidad: {{ movimientos[2] }}</p>
+                <p class="text-gray-600">Fecha: {{ movimientos[3] }}</p>
+                <p class="text-gray-600">ID Usuario: {{ movimientos[4] }}</p>
+                <p class="text-gray-600">Nombre Usuario: {{ movimientos[7] }}</p>
+                <p class="text-gray-600">Tipo de movimiento: {{ movimientos[8] }}</p>
+            </div>
+            </div>
+        {% endfor %}
+    {% else %} 
+        <div class="mt-50"> 
+          <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="ml-[530px]" fill="currentColor">
+            <path d="M155-195q-35-35-35-85H40v-440q0-33 23.5-56.5T120-800h560v160h120l120 160v200h-80q0 50-35 85t-85 35q-50 0-85-35t-35-85H360q0 50-35 85t-85 35q-50 0-85-35Zm113.5-56.5Q280-263 280-280t-11.5-28.5Q257-320 240-320t-28.5 11.5Q200-297 200-280t11.5 28.5Q223-240 240-240t28.5-11.5ZM120-360h32q17-18 39-29t49-11q27 0 49 11t39 29h272v-360H120v360Zm628.5 108.5Q760-263 760-280t-11.5-28.5Q737-320 720-320t-28.5 11.5Q680-297 680-280t11.5 28.5Q703-240 720-240t28.5-11.5ZM680-440h170l-90-120h-80v120ZM360-540Z"/>
+          </svg> 
+          <h1 class="text-xl  ml-[400px]">No hay movimientos registrados</h1>
+        </div>
+    {% endif %}
+  </div>
+<script src="{{ url_for('static', filename='js/lista.js') }}"></script>
+</body>
+</html>

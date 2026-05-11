@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+    <link href="/static/img/icono/pintuplomer_logo.ico" rel="shortcut icon" />
+</head>
+<body class="bg-slate-100 flex">
+  
+    {% include 'components/navegacion_if.html' %}
+
+    <div class="w-full ml-96 p-4">
+      <div class="flex items-center space-x-2 mb-4 justify-end">
+        <p class="text-xl font-bold">{{ nombre }}</p>
+        <img src="{{ url_for('static', filename='img/perfil/' + imagen) }}" class="w-17 rounded-full">
+      </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flex flex-col space-y-2">
+          {% for message in messages %}
+            <p class="bg-red-200 text-red-800 p-2 mt-3 rounded-md text-center text-xl mb-2">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div>
+        <h1 class="text-center mb-10 text-2xl text-slate-800">Eliminar Producto</h1> 
+        <form class="bg-white mx-[270px] border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl" action="{{ url_for('inventario.delete_producto', id=producto[0]) }}" onsubmit="return confirmar()" method="POST" enctype="multipart/form-data">
+            <label class="font-medium text-gray-700 text-xl">Imagen</label> <br>
+            <img src="{{ url_for('static', filename='img/productos/' + producto[5] ) }}" alt="Foto actual" class="w-65 h-55 border rounded-xl ml-35">
+            <label for="nombre" class="text-xl font-medium text-gray-700 ">Nombre del producto:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" name="nombre" id="nombre" placeholder="Nombre del producto" value="{{ producto[1] }}" readonly/> <br>
+            <label for="detalles" class="text-xl font-medium text-gray-700">Descripcion:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" id="detalles" name="detalles" value="{{ producto[2] }}" placeholder="Descripcion del producto" readonly> <br>
+            <label for="precio" class="text-xl font-medium text-gray-700">Precio:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="number" id="precio" name="precio" value="{{ producto[3] }}" placeholder="Precio del producto" readonly> <br>
+            <label for="existencia" class="text-xl font-medium text-gray-700">Cantidad:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="number" id="existencia" name="existencia" value="{{ producto[4] }}" placeholder="Cantidad en existencia" readonly> <br>
+            <label for="minima" class="text-xl font-medium text-gray-700">Cantidad minima:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="number" id="minima" name="minima" value="{{ producto[6] }}" placeholder="Cantidad en existencia" readonly> <br>
+            <label for="categoria_seleccionado" class="text-xl font-medium text-gray-700">Categoria actual:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="text" id="categoria_seleccionado" name="categoria_seleccionado" value="{{ producto[7] }}" readonly> <br> 
+            <label for="medida_seleccionado" class="text-xl font-medium text-gray-700">Medida actual:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="text" id="medida_seleccionado" name="medida_seleccionado" value="{{ producto[8] }}" readonly> <br>
+            <label for="distribuidor_seleccionado" class="text-xl font-medium text-gray-700">Proveedor actual:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="text" id="distribuidor_seleccionado" name="distribuidor_seleccionado" value="{{ producto[9] }}" readonly> <br> <br>
+            <input type="hidden" name="foto_actual" value="{{ producto[5] }}">
+            <button type="submit" class="bg-red-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-red-600 mb-2" >Borrar producto</button>
+        </form>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/confirmacion.js') }}"></script>
+</body>
+</html>

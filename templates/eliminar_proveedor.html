@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+    <link href="/static/img/icono/pintuplomer_logo.ico" rel="shortcut icon" />
+</head>
+<body class="bg-slate-100 flex">
+    
+    {% include 'components/navegacion_if.html' %}
+
+    <div class="w-full ml-96 p-4">
+      <div class="flex items-center space-x-2 mb-4 justify-end">
+        <p class="text-xl font-bold">{{ nombre }}</p>
+        <img src="{{ url_for('static', filename='img/perfil/' + imagen) }}" class="w-17 rounded-full">
+      </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flex flex-col space-y-2">
+          {% for message in messages %}
+            <p class="bg-red-200 text-red-800 p-2 mt-3 rounded-md text-center text-xl mb-2">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div>
+        <h1 class="text-center mb-10 text-2xl text-slate-800">Eliminar proveedor</h1> 
+        <form class="bg-white mx-[270px] border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl" action="{{ url_for('proveedor.delete_proveedor', id=proveedor_obtenido[0]) }}" onsubmit="return confirmar()" method="POST">
+            <label for="nombre" class="text-xl font-medium text-gray-700 ">Nombre del proveedor:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" name="nombre" id="nombre" value="{{ proveedor_obtenido[1] }}" placeholder="Nombre del proveedorr" readonly/> <br>
+            <label for="rif" class="text-xl font-medium text-gray-700 ">RIF del proveedor:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" name="rif" id="rif" value="{{ proveedor_obtenido[5] }}" readonly/> <br>
+            <label for="correo" class="text-xl font-medium text-gray-700">Correo:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" id="correo" name="correo" value="{{ proveedor_obtenido[2] }}" placeholder="Correo del proveedor" readonly> <br>
+            <label for="direccion" class="text-xl font-medium text-gray-700">Direccion:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="text" id="direccion" name="direccion" value="{{ proveedor_obtenido[3] }}" placeholder="Direccion del proveedor" readonly> <br>
+            <label for="telefono" class="text-xl font-medium text-gray-700">telefono:</label> <br>
+            <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="number" id="telefono" name="telefono" value="{{ proveedor_obtenido[4] }}" placeholder="Numero de telefono" readonly> <br> <br>
+            <button type="submit" class="bg-red-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-red-600 mb-2" >Eliminar Proveedor</button>
+        </form>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/confirmacion.js') }}"></script>
+</body>
+</html>

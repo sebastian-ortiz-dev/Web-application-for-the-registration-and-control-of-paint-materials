@@ -1,0 +1,69 @@
+from flask import redirect, url_for, flash, session, request
+import psycopg2
+from psycopg2.pool import ThreadedConnectionPool
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+        
+class Conexion():
+    def __init__(self):
+        pass
+        
+    @classmethod
+    def iniciar_conexion(self):
+        try:
+            # ThreadedConnectionPool(1, 10, dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'), port='5432')
+            self.db = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'))
+            cursor = self.db.cursor()
+            return cursor
+        except Exception as e:
+            print("Ha ocurrido un error al conectar a la base de datos: ", e)
+            flash("¡Error! Ha ocurrido un error en el servidor intentelo otra vez mas tarde")
+            return redirect(request.path)
+    
+    def todos(self, ejecuta, texto):
+        ejecuta.execute(texto)
+        return ejecuta.fetchall()
+    
+    def todos_parametros(self, ejecuta, texto, parametros):
+        ejecuta.execute(texto, parametros)
+        return ejecuta.fetchall()
+
+    def uno(self, ejecuta, texto, parametros):
+        ejecuta.execute(texto, parametros)
+        return ejecuta.fetchone()        
+
+    def registrar(self, ejecuta, texto, parametros):
+        ejecuta.execute(texto, parametros)
+            
+    @classmethod
+    def ejecutar_cambio(self):
+        try:
+            self.db.commit()
+            return True
+        except Exception as e:
+            self.db.rollback()
+            print("Ha ocurrido un error al conectar a la base de datos: ", e)
+            flash("¡Error! Ha ocurrido un error al realizar los cambios")
+            return redirect(request.full_path)
+
+    @classmethod
+    def cerrar_conexion(self, cursor):
+        cursor.close()
+        self.db.close()
+        
+
+"""def registrar(self, ejecuta, texto, parametros):
+        try:
+            ejecuta.execute(texto, parametros)
+            self.db.commit()
+            return True
+        except Exception as e:
+            self.db.rollback()
+            print("Ha ocurrido un error al conectar a la base de datos: ", e)
+            flash("¡Error! Ha ocurrido un error al realizar los cambios")
+            if session['nivel_acceso'] == 'Administrador':
+                return redirect(url_for('inventario.index'))
+            else:
+                return redirect(url_for('inventario.trabajador'))"""
