@@ -60,27 +60,3 @@ app.register_blueprint(reporte_route)
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
 
-
-"""
-request: Permite acceder a los datos que un usuario envía con su petición, como los datos de un formulario o los parámetros de la URL. 
-Por ejemplo, si un usuario envía un formulario, request.form contendrá esa información.
-
-redirect: Sirve para redirigir al usuario de una página a otra. Es muy útil después de que un usuario envía un formulario, 
-para llevarlo a una página de confirmación.
-
-url_for: Crea una URL para una función específica. En lugar de escribir la ruta (/contacto), usas url_for('contacto'), 
-lo que hace tu código más flexible. Si cambias la ruta de la función contacto, no necesitas actualizar el enlace en todo tu código.
-
-render_template: La más importante para crear páginas web. Te permite renderizar archivos HTML que están en una carpeta llamada 
-templates. Esto separa la lógica de tu aplicación (en Python) de la estructura de tu página (en HTML).
-
-session: Se utiliza para guardar datos específicos del usuario en el servidor, de forma segura, durante su sesión. Por ejemplo, 
-puedes guardar que un usuario ha iniciado sesión.
-
-Atributo,Fuente del dato,Uso principal
-request.args,URL (?id=1),"Filtros, búsquedas, navegación."
-request.form,Formulario HTML,"Registro de datos, Login, formularios pesados."
-request.values,Combinación de ambos,Cuando no te importa de dónde venga el dato.
-request.json,Cuerpo en formato JSON,APIs modernas o aplicaciones de JavaScript/React.
-request.files,Archivos subidos,Carga de imágenes o documentos.
-"""
