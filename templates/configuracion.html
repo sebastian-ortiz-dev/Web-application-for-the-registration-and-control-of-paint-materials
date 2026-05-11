@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+    <link href="/static/img/icono/pintuplomer_logo.ico" rel="shortcut icon" />
+</head>
+<body class="bg-slate-100 flex">
+    
+  {% include 'components/navegacion_if.html' %}
+
+  <div class="w-full ml-96 p-4">
+    <div class="flex items-center space-x-2 mb-4 justify-end">
+      <p class="text-xl font-bold">{{ nombre }}</p>
+      <img src="{{ url_for('static', filename='img/perfil/' + imagen) }}" class="w-17 rounded-full">
+    </div>
+
+    <div class="flex items-center bg-white h-14 rounded-sm shadow-md">
+        <p class="text-xl font-bold pl-2 text-gray-600">Configuracion de Medidas y Categorias</p>
+        <a href="{{ url_for('configuracion.agregar_categoria') }}" class="cursor-pointer ml-96 bg-green-300 text-green-900 p-2 rounded-xl hover:bg-green-500 hover:text-white">Agregar categoria</a>
+        <a href="{{ url_for('configuracion.agregar_medida') }}" class="cursor-pointer bg-green-300 text-green-900 p-2 rounded-xl hover:bg-green-500 hover:text-white ml-16">Agregar medida</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flex flex-col space-y-2">
+          {% for message in messages %}
+            <p class="bg-blue-200 text-blue-800 p-2 mt-3 rounded-md text-center text-xl">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="ml-2 mt-5">
+        <p class="text-gray-600">Desea agregar o modificar?</p>
+    </div>   
+    
+    <div class="flex flex-wrap gap-x-40 mx-40 mt-20">
+      <div class="bg-white w-70 rounded-2xl">
+        <h2 class="text-2xl font-bold text-center">Categorias: </h2>
+        {% if categorias %}
+          {% for categoria in categorias %}
+            <p class="text-gray-600 pl-1 my-2 flex gap-1">{{ categoria[1] }}
+              <a href="{{ url_for('configuracion.editar_categoria', id=categoria[0] ) }}"> 
+                <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-5 h-5 hover:text-blue-500 cursor-pointer" fill="currentColor">
+                  <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
+                </svg> 
+              </a>
+            </p>
+          {% endfor %}
+        {% else %}
+          <p class="text-gray-500 text-2xl">No hay categorias</p>
+        {% endif %}
+      </div>
+
+      <div class="bg-white w-70 rounded-2xl">
+        <h2 class="text-2xl font-bold text-center">Medidas: </h2>
+        {% if medidas %}
+          {% for medida in medidas %}
+            <p class="text-gray-600 pl-1 my-2 flex gap-1">{{ medida[1] }}
+              <a href="{{ url_for('configuracion.editar_medida', id=medida[0] ) }}"> 
+                <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-5 h-5 hover:text-blue-500 cursor-pointer" fill="currentColor">
+                  <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
+                </svg> 
+              </a>
+            </p>
+          {% endfor %}
+        {% else %}
+          <p class="text-gray-500 text-2xl">No hay medidas</p>
+        {% endif %}
+       
+      </div>
+    </div>
+  </div>
+<script src="{{ url_for('static', filename='js/lista.js') }}"></script>
+</body>
+</html>

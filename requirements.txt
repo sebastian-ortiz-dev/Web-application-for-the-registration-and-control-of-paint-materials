@@ -1,0 +1,7 @@
+flask[estandard] # librerias como os que ya viene en python y wekezeug que viene en flask no son necesarias ponerlas
+psycopg2-binary
+python-dotenv
+weasyprint
+datetime
+pillow
+pyjwt

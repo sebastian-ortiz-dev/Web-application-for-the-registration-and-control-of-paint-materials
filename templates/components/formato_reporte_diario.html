@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        #cabezero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa; 
+            padding: 20px;
+            border-bottom: 3px solid #333;
+            margin-bottom: 10px;
+        }
+
+        #cabezero h1 {
+            font-size: 24pt;
+            letter-spacing: 2px;
+        }
+
+        #cabezero h2 {
+            font-size: 14pt;
+            color: #666;
+        }
+
+        section {
+            margin-bottom: 10px;
+        }
+
+        section h2 {
+            font-size: 11pt;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .resumen-valor {
+            text-align: right;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .grid-cuadros {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .cuadro {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .cuadro p:first-child {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #777;
+            margin-bottom: 5px;
+            padding-top: 5px;
+        }
+
+        .cuadro p:nth-child(2) {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 0;
+            padding-top: 5px;
+        }
+
+        .detalle-lista {
+            display: flex;
+            font-family: 'Courier', monospace;
+            font-size: 10pt;
+            background-color: #fafafa;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            margin-top: 2px;
+        }
+
+        .seccion-final {
+            margin-top: 30px;
+        }
+
+        .contenedor-firmas {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 60px;
+        }
+
+        .firma {
+            width: 200px;
+            border-top: 1px solid #333;
+            text-align: center;
+            font-size: 9pt;
+            font-weight: bold;
+            padding-top: 5px;
+        }
+
+        .metadata {
+            margin-top: 1px;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <section id="cabezero">
+            <div>
+                <h1>INVERSIONES PINTUPLOMER C.A</h1>
+                <h2>Reporte Diario</h2>
+            </div>
+            <div class="resumen-valor">
+                <p>Valor Total Inventario</p>
+                <p>Bs.{{ valor[0][0] }}</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Stock Crítico</h2>
+            <div class="detalle-lista">
+                <div style="display: flex; justify-content: space-between;">
+                    <p><strong>Cantidad de Productos con Stock Critico: {{ cantidad_stock_critico[0][0] }}</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Resumen de Movimientos del Día</h2>
+            <div class="grid-cuadros">
+                <div class="cuadro">
+                    <p>ENTRADAS</p>
+                    <p>{{ entrada_cantidad[0][0] }}</p>
+                    <p style="margin-top: 2px;">Valor: Bs.{{entradas[0][0]}}</p>
+                </div>
+                <div class="cuadro">
+                    <p>SALIDAS</p>
+                    <p>{{ salida_cantidad[0][0] }}</p>
+                    <p style="margin-top: 2px;">Valor: Bs.{{ salidas[0][0] }}</p>
+                </div>
+                <div class="cuadro">
+                    <p>AJUSTES</p>
+                    <p>{{ ajuste_cantidad[0][0] }}</p>
+                    <p style="margin-top: 5px;">Valor Aumento: Bs.{{ ajuste_aumento[0][0] }}</p>
+                    <p>Valor Disminucion: Bs.{{ ajuste_disminucion[0][0] }}</p>
+                </div>
+                <div class="cuadro">
+                    <p>DEVOLUCIONES</p>
+                    <p>{{ devoluciones_cantidad[0][0] }}</p>
+                    <p >Valor: Bs.{{ devoluciones_bs[0][0] }}</p>
+                </div>
+            </div>
+            
+        </section>
+
+        <section class="seccion-final">
+            <p><strong>Observaciones:</strong> ______________________________________________________________________________________________</p>
+            
+            <div class="contenedor-firmas">
+                <div class="firma">Firma Almacén</div>
+                <div class="firma">Firma Administración</div>
+            </div>
+
+            <div class="metadata">
+                <p>Inversiones Pintuplomer C.A - Reporte generado el {{ fecha }}</p>
+                <p>Hora: {{ hora }} | Perfil: {{ perfil[0] }}</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

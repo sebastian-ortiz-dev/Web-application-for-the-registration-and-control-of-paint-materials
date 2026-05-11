@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintuplomer</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+    <link href="/static/img/icono/pintuplomer_logo.ico" rel="shortcut icon" />
+<body class="bg-slate-100 flex">
+    
+    {% include 'components/navegacion.html' %}
+
+    <div class="w-full ml-96 p-4">
+      <div class="flex items-center space-x-2 mb-4 justify-end">
+        <p class="text-xl font-bold">{{ nombre }}</p>
+        <img src="{{ url_for('static', filename='img/perfil/' + imagen) }}" class="w-17 rounded-full">
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flex flex-col space-y-2">
+            {% for message in messages %}
+              <p class="bg-red-200 text-red-800 p-2 mt-3 rounded-md text-center text-xl mb-2">{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div>
+          <h1 class="text-center mb-10 text-2xl text-slate-800">Nuevo Usuario</h1> 
+          <form class="bg-white mx-[270px] border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl" action="{{ url_for('usuario.crear_usuario') }}" method="POST" enctype="multipart/form-data">
+              <label for="imagen" class="font-medium text-gray-700 text-xl">Imagen:</label> <br>
+              <input type="file" name="imagen" id="imagen" /> <br>
+              <label for="nombre" class="text-xl font-medium text-gray-700 ">Nombre de usuario:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="text" name="nombre" id="nombre" placeholder="Nombre de usuario" required/> <br>
+              <label for="contraseña" class="text-xl font-medium text-gray-700">Contraseña:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " type="password" id="contraseña" name="contraseña" placeholder="Contraseña del usuario" required> <br>
+              <label for="confirmar" class="text-xl font-medium text-gray-700">Confirmar Contraseña:</label> <br>
+              <input class="pl-2 my-2 bg-slate-100 rounded-sm w-55" type="password" id="confirmar" name="confirmar" placeholder="Confirmar contraseña" required> <br>
+              <label for="acceso" class="text-xl font-medium text-gray-700">Seleccione el nivel de acceso:</label>
+              {% if niveles %}
+                <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm " id="acceso" name="acceso">
+                  <option value=" ">-- Elige el perfil --</option>
+                  {% for nivel in niveles %}
+                  <option value="{{ nivel[0] }}">{{ nivel[1] }}</option>
+                  {% endfor %}
+                </select> <br> <br>
+              {% endif %}
+              <button type="submit" class="bg-green-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-green-600 mb-2" >Agregar Usuario</button>
+          </form>
+      </div>
+    </div>
+</body>
+</html>
