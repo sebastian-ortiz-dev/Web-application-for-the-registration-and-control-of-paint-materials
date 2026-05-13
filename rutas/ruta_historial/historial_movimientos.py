@@ -32,8 +32,7 @@ def historial_movimientos(datos_usuario):
 @historial_route.route('/historia_filtro/<int:categoria>')
 @login_requerido
 @validation_jwt
-def historial_movimientos_filtro(categoria, datos_usuario):
-    print(categoria)
+def historial_movimientos_filtro(datos_usuario, categoria):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()

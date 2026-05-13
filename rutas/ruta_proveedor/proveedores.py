@@ -85,7 +85,7 @@ def crear_proveedor(datos_usuario):
 @proveedor_route.route('/edit_proveedor/<int:id>')
 @login_requerido
 @validation_jwt
-def editar_proveedor(id, datos_usuario):
+def editar_proveedor(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -101,7 +101,7 @@ def editar_proveedor(id, datos_usuario):
 @proveedor_route.route('/cambios_proveedor/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def cambio_proveedor(id, datos_usuario):
+def cambio_proveedor(datos_usuario, id):
     nombre = request.form['nombre']
     correo = request.form['correo']
     direccion = request.form['direccion']
@@ -125,7 +125,7 @@ def cambio_proveedor(id, datos_usuario):
 @proveedor_route.route('/eliminar_proveedor/<int:id>')
 @login_requerido
 @validation_jwt
-def eliminar_proveedor(id, datos_usuario):
+def eliminar_proveedor(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad= productor.listar_minimo_cantidad()
@@ -141,7 +141,7 @@ def eliminar_proveedor(id, datos_usuario):
 @proveedor_route.route('/delete_proveedor/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def delete_proveedor(id, datos_usuario):
+def delete_proveedor(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()    
     consulta, parametro = proveedor.eliminar_proveedor(id)

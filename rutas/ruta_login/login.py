@@ -38,6 +38,7 @@ def login():
                 instancia_conexion.cerrar_conexion(cursor)
                 flash("¡Error! user or password incorrect.")
                 return redirect(url_for('login.login'))
+            
             session['id_usuario'] = recuperado[0]
             session['usuario_nombre'] = recuperado[1]
             session['imagen_usuario'] = recuperado[3]
@@ -45,6 +46,7 @@ def login():
             encode = create_jwt(recuperado[0], recuperado[1], recuperado[3], recuperado[4])
             query, parameters = refresh.verify_refresh_login(recuperado[0], date.today())
             recovery = instancia_conexion.uno(cursor, query, parameters)
+
             if recovery:
                 token = create_cookie(encode, recovery[1])
             else:

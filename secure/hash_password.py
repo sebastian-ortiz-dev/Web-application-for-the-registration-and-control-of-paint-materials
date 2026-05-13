@@ -16,7 +16,10 @@ class Hash_password(object):
         except Exception as e:
             print(f"incorrect password: {e}")
             return False
-            
+
+    def create_hash(self, password):
+        hash = ph.hash(password)
+        return hash            
 
     def rehash(self, password):
         new_hash = ph.hash(password)
