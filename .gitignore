@@ -6,7 +6,7 @@ documento.py
 reporte.html
 .dockerignore
 dockerfile_2
-cromasdb.sql
+test.py
 ./backup_reportes/*
 
 __pycache__/

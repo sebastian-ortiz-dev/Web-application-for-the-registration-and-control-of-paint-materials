@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from secure.process_image import *
+from secure.hash_password import Hash_password
 from werkzeug.utils import secure_filename
 from datetime import date
 import os
@@ -19,6 +20,7 @@ productor = Producto()
 acceso = Acceso()
 usuario = Usuario()
 listado = Tipo_listado()
+hash = Hash_password()
 # Ruta con la vista principal de los usuarios
 @usuario_route.route('/usuarios')
 @login_requerido
@@ -58,7 +60,7 @@ def trabajadores_filtro(categoria, datos_usuario):
 @usuario_route.route('/usuario_detalles/<int:id>')
 @login_requerido
 @validation_jwt
-def usuario_detalles(id, datos_usuario):
+def usuario_detalles(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -118,6 +120,7 @@ def crear_usuario(datos_usuario):
     else:
         archivo = "usuario_defecto.png"
 
+    contraseña = hash.create_hash(contraseña)
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     usuarios, parametro = usuario.create_usuario(nombre, contraseña, acceso, archivo, date.today())
@@ -140,7 +143,7 @@ def crear_usuario(datos_usuario):
 @usuario_route.route('/editar_usuario/<int:id>')
 @login_requerido
 @validation_jwt
-def editar_usuario(id, datos_usuario):
+def editar_usuario(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -158,7 +161,7 @@ def editar_usuario(id, datos_usuario):
 @usuario_route.route('/cambios_usuario/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def cambios_usuario(id, datos_usuario):
+def cambios_usuario(datos_usuario, id):
     imagen = request.files['imagen']
     nombre = request.form['nombre']
     contraseña = request.form['contraseña']
@@ -166,12 +169,16 @@ def cambios_usuario(id, datos_usuario):
     acceso = request.form['acceso']
     filename = None
     subcarpeta = 'perfil'
+    verification = True
 
     if contraseña != confirmar:
         flash('¡Error! Las contraseñas no coinciden')
         return redirect(url_for('usuario.editar_usuario', id=id))
     
-    if not image_verification(imagen.read()):
+    if imagen:
+        verification = image_verification(imagen.read())
+
+    if not verification:
         flash('Formato de imagen no permitido')
         return redirect(url_for('usuario.usuario_nuevo'))
 
@@ -183,6 +190,7 @@ def cambios_usuario(id, datos_usuario):
     else:
         archivo = request.form.get('foto_actual')
 
+    contraseña = hash.create_hash(contraseña)
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     usuarios, parametro = usuario.modificar_usuario(nombre, contraseña, acceso, archivo, id)
@@ -201,7 +209,7 @@ def cambios_usuario(id, datos_usuario):
 @usuario_route.route('/eliminar_usuario/<int:id>')
 @login_requerido
 @validation_jwt
-def eliminar_usuario(id, datos_usuario):
+def eliminar_usuario(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -217,7 +225,7 @@ def eliminar_usuario(id, datos_usuario):
 @usuario_route.route('/delete_usuario/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def delete_usuario(id, datos_usuario):
+def delete_usuario(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     usuarios, parametro = usuario.eliminar_usuario(id)

@@ -150,7 +150,7 @@ def producto_proveedores_busqueda(datos_usuario):
 @inventario_route.route('/editar/<int:id>')
 @login_requerido
 @validation_jwt
-def editar(id, datos_usuario):
+def editar(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()    
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -169,7 +169,7 @@ def editar(id, datos_usuario):
 @inventario_route.route('/cambios_producto/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def cambios_hecho(id, datos_usuario):
+def cambios_hecho(datos_usuario, id):
     imagen = request.files['imagen']
     nombre = request.form['nombre']
     detalles = request.form['detalles']
@@ -181,8 +181,12 @@ def cambios_hecho(id, datos_usuario):
     cantidad_minima = request.form['minima']
     filename = None
     subcarpeta = 'productos'
+    verification = True
 
-    if not image_verification(imagen) :
+    if imagen:
+        verification = image_verification(imagen.read())
+
+    if not verification:
         flash('Formato de imagen no permitido')
         return redirect(url_for('inventario.editar', id=id))
 
@@ -216,7 +220,7 @@ def cambios_hecho(id, datos_usuario):
 @inventario_route.route('/eliminar/<int:id>')
 @login_requerido
 @validation_jwt
-def eliminar(id, datos_usuario):
+def eliminar(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()  
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -232,7 +236,7 @@ def eliminar(id, datos_usuario):
 @inventario_route.route('/delete_producto/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def delete_producto(id, datos_usuario):
+def delete_producto(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()  
     producto, parametro = productor.eliminar_producto(id) 
@@ -254,7 +258,7 @@ def delete_producto(id, datos_usuario):
 @inventario_route.route('/detalles/<int:id>')
 @login_requerido
 @validation_jwt
-def detalles(id, datos_usuario):
+def detalles(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()   
     minimo_cantidad = productor.listar_minimo_cantidad()

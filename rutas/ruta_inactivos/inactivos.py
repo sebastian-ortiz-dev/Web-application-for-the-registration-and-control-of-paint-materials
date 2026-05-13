@@ -33,7 +33,7 @@ def inactivos(datos_usuario):
 @inactivos_route.route('/reintegrar_producto/<int:id>')
 @login_requerido
 @validation_jwt
-def reintegrar_producto(id, datos_usuario):
+def reintegrar_producto(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()  
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -48,7 +48,7 @@ def reintegrar_producto(id, datos_usuario):
 @inactivos_route.route('/recuperar_producto/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def recuperar_producto(id, datos_usuario):
+def recuperar_producto(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()  
     texto, parametro = productor.recuperar_producto(id)
@@ -96,7 +96,7 @@ def inactivo_proveedor(datos_usuario):
 @inactivos_route.route('/reintegrar_proveedor/<int:id>')
 @login_requerido
 @validation_jwt
-def reintegrar_proveedor(id, datos_usuario):
+def reintegrar_proveedor(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -111,7 +111,7 @@ def reintegrar_proveedor(id, datos_usuario):
 @inactivos_route.route('/recuperar_proveedor/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def recuperar_proveedor(id, datos_usuario):
+def recuperar_proveedor(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()    
     consulta, parametro = proveedor.recuperar_proveedor(id)
@@ -160,7 +160,7 @@ def inactivo_perfil(datos_usuario):
 @inactivos_route.route('/reintegrar_perfil/<int:id>')
 @login_requerido
 @validation_jwt
-def reintegrar_perfil(id, datos_usuario):
+def reintegrar_perfil(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -176,7 +176,7 @@ def reintegrar_perfil(id, datos_usuario):
 @inactivos_route.route('/recuperar_perfil/<int:id>', methods=['POST'])
 @login_requerido
 @validation_jwt
-def recuperar_perfil(id, datos_usuario):
+def recuperar_perfil(datos_usuario, id):
     instancia_conexion = Conexion()
     cursor = instancia_conexion.iniciar_conexion()
     usuarios, parametro = perfil.recuperar_usuario(id)

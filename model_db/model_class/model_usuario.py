@@ -11,6 +11,11 @@ class Usuario(object):
         query = "UPDATE usuario SET nombre_usuario=%s, clave=%s, id_nivel=%s, imagen_usu=%s WHERE id_usuario = %s"
         parametros = (nombre, clave, nivel, imagen, id)
         return query, parametros
+    
+    def user_rehash(self, new_hash, id):
+        query = "UPDATE usuario SET clave=%s WHERE id_usuario = %s"
+        parametros = (new_hash, id)
+        return query, parametros
 
     def eliminar_usuario(self, id):
         query = "UPDATE usuario SET borrado=%s WHERE id_usuario = %s"
@@ -46,9 +51,10 @@ class Usuario(object):
         parametros = (id,)
         return query, parametros
 
-    def login(self, nombre, clave):
-        query = "SELECT usuario.id_usuario, usuario.nombre_usuario, usuario.clave, usuario.imagen_usu, niveles_acceso.nombre_nivel FROM usuario INNER JOIN niveles_acceso ON usuario.id_nivel = niveles_acceso.id_nivel WHERE nombre_usuario = %s AND clave = %s"
-        parametros = (nombre, clave)
+    def login(self, nombre):
+        #query = "SELECT usuario.id_usuario, usuario.nombre_usuario, usuario.clave, usuario.imagen_usu, niveles_acceso.nombre_nivel FROM usuario INNER JOIN niveles_acceso ON usuario.id_nivel = niveles_acceso.id_nivel WHERE nombre_usuario = %s AND clave = %s"
+        query = "SELECT usuario.id_usuario, usuario.nombre_usuario, usuario.clave, usuario.imagen_usu, niveles_acceso.nombre_nivel FROM usuario INNER JOIN niveles_acceso ON usuario.id_nivel = niveles_acceso.id_nivel WHERE nombre_usuario = %s"
+        parametros = (nombre,)
         return query, parametros
     
     def busqueda_usuario(self, filtro):

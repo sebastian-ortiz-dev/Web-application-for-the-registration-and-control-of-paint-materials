@@ -7,6 +7,7 @@ from middleware.create_jwt import *
 from middleware.auth import data_jwt
 from secure.create_cookie import *
 from secure.delete_cookie import delete_cookie
+from secure.hash_password import Hash_password
 from datetime import date
 
 load_dotenv()
@@ -14,6 +15,7 @@ load_dotenv()
 login_route = Blueprint('login', __name__, template_folder='templates')
 usuarios = Usuario()
 refresh = Refresh_token()
+hash = Hash_password()
 # Ruta donde el usuario ingresa los datos y se consulta a la DB
 @login_route.route("/login", methods=['GET', 'POST'])
 def login():
@@ -23,12 +25,20 @@ def login():
 
         instancia_conexion = Conexion()
         cursor = instancia_conexion.iniciar_conexion()
-        print(f'objeto cursor tipo:{type(cursor)}')
-        print(f'objeto cursor:{cursor}')
-        texto, parametros = usuarios.login(nombre, clave)
+        texto, parametros = usuarios.login(nombre)
         recuperado = instancia_conexion.uno(cursor, texto, parametros)
 
         if recuperado:
+            rehash = hash.hash_password_verify(recuperado[2], clave)
+            if rehash:
+                text, parameters = usuarios.user_rehash(rehash, recuperado[0])
+                instancia_conexion.registrar(cursor, text, parameters)
+                instancia_conexion.ejecutar_cambio()
+            elif rehash == False:
+                instancia_conexion.cerrar_conexion(cursor)
+                flash("¡Error! user or password incorrect.")
+                return redirect(url_for('login.login'))
+            
             session['id_usuario'] = recuperado[0]
             session['usuario_nombre'] = recuperado[1]
             session['imagen_usuario'] = recuperado[3]
@@ -36,6 +46,7 @@ def login():
             encode = create_jwt(recuperado[0], recuperado[1], recuperado[3], recuperado[4])
             query, parameters = refresh.verify_refresh_login(recuperado[0], date.today())
             recovery = instancia_conexion.uno(cursor, query, parameters)
+
             if recovery:
                 token = create_cookie(encode, recovery[1])
             else:
@@ -50,7 +61,7 @@ def login():
 
             return token
         else:
-            flash("¡Error! Usuario o Contraseña incorrectos. Intentelo de nuevo")
+            flash("¡Error! The user does not exist")
             return redirect(url_for('login.login'))
 
     return render_template('login.html')
