@@ -1,4 +1,4 @@
-# Web-application-for-the-registration-and-control-of-paint-materials
+# Inventory-Architecture-Python
 This project was developed as my Graduation Thesis for my Associate Degree (TSU) in Computer Science. The goal was twofold: to solve a real-world inventory problem and to push my limits using a micro-framework to build a robust, production-ready web application.
 
 Technical Philosophy: Why Raw SQL?
