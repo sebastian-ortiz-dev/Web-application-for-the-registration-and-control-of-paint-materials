@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-        
+
 class Conexion():
     def __init__(self):
         pass
@@ -13,10 +13,12 @@ class Conexion():
     @classmethod
     def iniciar_conexion(self):
         try:
-            # ThreadedConnectionPool(1, 10, dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'), port='5432')
-            self.db = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'))
-            cursor = self.db.cursor()
-            return cursor
+            # self.db = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'))
+            self.connection_db = ThreadedConnectionPool(1, 15, dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'), port='5432')
+            pool_db = self.connection_db.getconn()
+            cursor = pool_db.cursor()
+            # cursor = self.db.cursor()
+            return pool_db, cursor
         except Exception as e:
             print("Ha ocurrido un error al conectar a la base de datos: ", e)
             flash("¡Error! Ha ocurrido un error en el servidor intentelo otra vez mas tarde")
@@ -38,20 +40,22 @@ class Conexion():
         ejecuta.execute(texto, parametros)
             
     @classmethod
-    def ejecutar_cambio(self):
+    def ejecutar_cambio(self, pool_db):
         try:
-            self.db.commit()
+            pool_db.commit()
+            #self.db.commit()
             return True
         except Exception as e:
-            self.db.rollback()
+            pool_db.rollback()
+            # self.db.rollback()
             print("Ha ocurrido un error al conectar a la base de datos: ", e)
-            flash("¡Error! Ha ocurrido un error al realizar los cambios")
-            return redirect(request.full_path)
+            flash("¡Error! Ha ocurrido un error al realizar los cambios, intentelo mas tarde")
 
     @classmethod
-    def cerrar_conexion(self, cursor):
+    def cerrar_conexion(self, cursor, pool_db):
         cursor.close()
-        self.db.close()
+        self.connection_db.putconn(pool_db)
+        #self.db.close()
         
 
 """def registrar(self, ejecuta, texto, parametros):

@@ -58,4 +58,4 @@ app.register_blueprint(configuracion_route)
 app.register_blueprint(reporte_route)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True)

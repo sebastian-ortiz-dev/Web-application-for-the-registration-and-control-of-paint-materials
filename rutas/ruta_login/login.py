@@ -16,6 +16,7 @@ login_route = Blueprint('login', __name__, template_folder='templates')
 usuarios = Usuario()
 refresh = Refresh_token()
 hash = Hash_password()
+instancia_conexion = Conexion()
 # Ruta donde el usuario ingresa los datos y se consulta a la DB
 @login_route.route("/login", methods=['GET', 'POST'])
 def login():
@@ -23,8 +24,7 @@ def login():
         nombre = request.form['usuario']
         clave = request.form['clave']
 
-        instancia_conexion = Conexion()
-        cursor = instancia_conexion.iniciar_conexion()
+        pool_db, cursor = instancia_conexion.iniciar_conexion()
         texto, parametros = usuarios.login(nombre)
         recuperado = instancia_conexion.uno(cursor, texto, parametros)
 
@@ -33,9 +33,9 @@ def login():
             if rehash:
                 text, parameters = usuarios.user_rehash(rehash, recuperado[0])
                 instancia_conexion.registrar(cursor, text, parameters)
-                instancia_conexion.ejecutar_cambio()
+                instancia_conexion.ejecutar_cambio(pool_db)
             elif rehash == False:
-                instancia_conexion.cerrar_conexion(cursor)
+                instancia_conexion.cerrar_conexion(cursor, pool_db)
                 flash("¡Error! user or password incorrect.")
                 return redirect(url_for('login.login'))
             
@@ -53,9 +53,9 @@ def login():
                 verify = str(uuid.uuid4())
                 query, parameters = refresh.create_refresh(recuperado[0], verify, False, date.today())
                 instancia_conexion.registrar(cursor, query, parameters)
-                instancia_conexion.ejecutar_cambio()
+                instancia_conexion.ejecutar_cambio(pool_db)
                 token = create_cookie(encode, verify)
-            instancia_conexion.cerrar_conexion(cursor)
+            instancia_conexion.cerrar_conexion(cursor, pool_db)
             decode = data_jwt(encode)
             flash(f'¡Bienvenido! {decode['usuario_nombre']}')
 
