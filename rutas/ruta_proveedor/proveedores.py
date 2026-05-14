@@ -13,18 +13,18 @@ proveedor_route = Blueprint('proveedor', __name__, template_folder='templates')
 productor = Producto() 
 proveedor = Proveedor()
 listado = Tipo_listado()
+instancia_conexion = Conexion()
 # Ruta con la vista principal con los proveedores
 @proveedor_route.route('/proveedores')
 @login_requerido
 @validation_jwt
 def proveedores(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     consulta = proveedor.listar()
     proveedores = instancia_conexion.todos(cursor, consulta)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -33,13 +33,12 @@ def proveedores(datos_usuario):
 @login_requerido
 @validation_jwt
 def tipo_listado(datos_usuario, categoria):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     tipo = listado.lista_proveedor(categoria)
     proveedores = instancia_conexion.todos(cursor, tipo)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -49,11 +48,10 @@ def tipo_listado(datos_usuario, categoria):
 @login_requerido
 @validation_jwt
 def proveedor_nuevo(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('agregar_proveedor.html', alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -68,12 +66,12 @@ def crear_proveedor(datos_usuario):
     direccion = request.form['direccion']
     telefono = request.form['telefono']
     rif = request.form['rif']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     consulta, parametros = proveedor.create_proveedor(nombre, correo, direccion, telefono, rif, date.today())
     instancia_conexion.registrar(cursor, consulta, parametros) 
-    resultado = instancia_conexion.ejecutar_cambio()
-    instancia_conexion.cerrar_conexion(cursor)
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     if resultado:
         flash('Proveedor registrado exitosamente')
         return redirect(url_for('proveedor.proveedores'))
@@ -86,13 +84,12 @@ def crear_proveedor(datos_usuario):
 @login_requerido
 @validation_jwt
 def editar_proveedor(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     consulta, parametro = proveedor.obtener_uno(id)
     proveedores = instancia_conexion.uno(cursor, consulta, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('editar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -108,12 +105,11 @@ def cambio_proveedor(datos_usuario, id):
     telefono = request.form['telefono']
     rif = request.form['rif']
 
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     modifica, parametro = proveedor.modificar_proveedor(id, nombre, correo, direccion, telefono, rif)
     instancia_conexion.registrar(cursor, modifica, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
-    instancia_conexion.cerrar_conexion(cursor)
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     if resultado:
         flash('Proveedor modificado')
         return redirect(url_for('proveedor.proveedores'))
@@ -126,13 +122,12 @@ def cambio_proveedor(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def eliminar_proveedor(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad= productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     consulta, parametro = proveedor.obtener_uno(id)
     proveedores = instancia_conexion.uno(cursor, consulta, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('eliminar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -142,12 +137,11 @@ def eliminar_proveedor(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def delete_proveedor(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()    
+    pool_db, cursor = instancia_conexion.iniciar_conexion()    
     consulta, parametro = proveedor.eliminar_proveedor(id)
     instancia_conexion.registrar(cursor, consulta, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
-    instancia_conexion.cerrar_conexion(cursor)
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash("Proveedor eliminado")
@@ -162,13 +156,12 @@ def delete_proveedor(datos_usuario, id):
 @validation_jwt
 def barra_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     consulta, parametro = proveedor.busqueda_proveedor(filtro) 
     proveedores = instancia_conexion.todos_parametros(cursor, consulta, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
