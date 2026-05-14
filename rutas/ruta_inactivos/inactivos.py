@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, request, redirect, flash, url_for
+from flask import Blueprint, render_template, request, redirect, flash, url_for
 from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
@@ -14,17 +14,18 @@ productor = Producto()
 proveedor = Proveedor()
 listado = Tipo_listado()
 perfil = Usuario()
+instancia_conexion = Conexion()
 
 @inactivos_route.route("/inactivos")
 @login_requerido
 @validation_jwt
 def inactivos(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto = productor.listar_inactivo()
     producto = instancia_conexion.todos(cursor, texto)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('inactivos.html', productos=producto, nombre=name, imagen=imagen_usuario, alerta=alerta)
@@ -34,13 +35,12 @@ def inactivos(datos_usuario):
 @login_requerido
 @validation_jwt
 def reintegrar_producto(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()  
+    pool_db, cursor = instancia_conexion.iniciar_conexion()  
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     producto, parametro = productor.obtener_uno(id) 
     producto_detalles = instancia_conexion.uno(cursor, producto, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('recuperar_producto.html', producto=producto_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -49,11 +49,11 @@ def reintegrar_producto(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def recuperar_producto(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()  
+    pool_db, cursor = instancia_conexion.iniciar_conexion()  
     texto, parametro = productor.recuperar_producto(id)
     instancia_conexion.registrar(cursor, texto, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     if resultado:
         flash('El producto ha sido reintegrado')
         return redirect(url_for("inactivos.inactivos"))
@@ -67,13 +67,12 @@ def recuperar_producto(datos_usuario, id):
 @validation_jwt
 def busqueda_producto_inactivo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()   
+    pool_db, cursor = instancia_conexion.iniciar_conexion()   
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     producto, parametro = productor.busqueda_productos_inactivo(filtro)
     resultado_busqueda = instancia_conexion.todos_parametros(cursor, producto, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('inactivos.html', productos=resultado_busqueda, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -82,12 +81,12 @@ def busqueda_producto_inactivo(datos_usuario):
 @login_requerido
 @validation_jwt
 def inactivo_proveedor(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto = proveedor.listar_inactivo()
     proveedores = instancia_conexion.todos(cursor, texto)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('inactivos_proveedores.html', proveedores=proveedores, nombre=name, imagen=imagen_usuario, alerta=alerta)
@@ -97,13 +96,12 @@ def inactivo_proveedor(datos_usuario):
 @login_requerido
 @validation_jwt
 def reintegrar_proveedor(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     consulta, parametro = proveedor.obtener_uno(id)
     proveedores = instancia_conexion.uno(cursor, consulta, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('recuperar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -112,12 +110,11 @@ def reintegrar_proveedor(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def recuperar_proveedor(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()    
+    pool_db, cursor = instancia_conexion.iniciar_conexion()    
     consulta, parametro = proveedor.recuperar_proveedor(id)
     instancia_conexion.registrar(cursor, consulta, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
-    instancia_conexion.cerrar_conexion(cursor)
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash("El proveedor ha sido reintegrado")
@@ -132,13 +129,12 @@ def recuperar_proveedor(datos_usuario, id):
 @validation_jwt
 def busqueda_proveedor_inactivo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     consulta, parametro = proveedor.busqueda_proveedor_inactivo(filtro)
     proveedores = instancia_conexion.todos_parametros(cursor, consulta, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('inactivos_proveedores.html', proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -147,12 +143,12 @@ def busqueda_proveedor_inactivo(datos_usuario):
 @login_requerido
 @validation_jwt
 def inactivo_perfil(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto = perfil.listar_inactivo_perfil()
     perfiles = instancia_conexion.todos(cursor, texto)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('perfil_inactivo.html', usuarios=perfiles, nombre=name, imagen=imagen_usuario, alerta=alerta)
@@ -161,13 +157,12 @@ def inactivo_perfil(datos_usuario):
 @login_requerido
 @validation_jwt
 def reintegrar_perfil(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     usuarios, parametro = perfil.obtener_uno(id)
     perfiles = instancia_conexion.uno(cursor, usuarios, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('recuperar_perfil.html', usuario=perfiles, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -177,12 +172,11 @@ def reintegrar_perfil(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def recuperar_perfil(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     usuarios, parametro = perfil.recuperar_usuario(id)
     instancia_conexion.registrar(cursor, usuarios, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
-    instancia_conexion.cerrar_conexion(cursor)
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash("El perfil ha sido reintegrado")
@@ -197,13 +191,12 @@ def recuperar_perfil(datos_usuario, id):
 @validation_jwt
 def busqueda_perfil_inactivo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     usuarios, parametro = perfil.busqueda_usuario_inactivo(filtro)
     perfiles = instancia_conexion.todos_parametros(cursor, usuarios, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('perfil_inactivo.html', usuarios=perfiles, alerta=alerta, nombre=name, imagen=imagen_usuario)
