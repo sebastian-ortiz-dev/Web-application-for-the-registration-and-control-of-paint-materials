@@ -12,18 +12,18 @@ historial_route = Blueprint('historial', __name__, template_folder='templates')
 productor = Producto() 
 listado = Tipo_listado()
 historial = Historia_Movimientos()
+instancia_conexion = Conexion()
 # Ruta que lista todos los movimientos que se hacen
 @historial_route.route('/historia')
 @login_requerido
 @validation_jwt
 def historial_movimientos(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     consulta, parametro = historial.listar()
     movimientos = instancia_conexion.todos_parametros(cursor, consulta, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('historial.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimientos)
@@ -33,13 +33,12 @@ def historial_movimientos(datos_usuario):
 @login_requerido
 @validation_jwt
 def historial_movimientos_filtro(datos_usuario, categoria):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)    
     tipo, parametro = listado.lista_historial_filtro(categoria)
     movimientos = instancia_conexion.todos_parametros(cursor, tipo, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('historial_filtro.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimientos, categoria=categoria)
@@ -51,8 +50,7 @@ def historial_movimientos_filtro(datos_usuario, categoria):
 def historial_intervalo(datos_usuario):
     desde = request.args['desde']
     hasta = request.args['hasta']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     if desde == '' or hasta == '':
@@ -60,7 +58,7 @@ def historial_intervalo(datos_usuario):
     else:
         query, parametro = historial.listar_intervalos(desde, hasta)
         movimientos = instancia_conexion.todos_parametros(cursor, query, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('historial_intervalos.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimientos, desde=desde, hasta=hasta)
@@ -73,8 +71,7 @@ def historial_intervalo_categoria(datos_usuario):
     desde = request.args['desde']
     hasta = request.args['hasta']
     categoria = int(request.args['categoria'])
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     if desde == '' or hasta == '':
@@ -82,7 +79,7 @@ def historial_intervalo_categoria(datos_usuario):
     else:
         query, parametro = historial.lista_historial_filtro_intervalo(categoria, desde, hasta)
         movimientos = instancia_conexion.todos_parametros(cursor, query, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('historial_intervalos_categoria.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimientos, desde=desde, hasta=hasta, categoria=categoria)
@@ -93,13 +90,12 @@ def historial_intervalo_categoria(datos_usuario):
 @validation_jwt
 def historial_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     consulta, parametro = historial.busqueda_historial(filtro)
     movimientos = instancia_conexion.todos_parametros(cursor, consulta, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('historial.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimientos)
@@ -111,13 +107,12 @@ def historial_busqueda(datos_usuario):
 def historial_busqueda_filtro(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     categoria = int(request.args['categoria'])
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     consulta, parametro = historial.busqueda_historial_filtrado_dias(filtro, categoria)
     movimientos = instancia_conexion.todos_parametros(cursor, consulta, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('historial_filtro.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimientos, categoria=categoria)
@@ -130,8 +125,7 @@ def historial_busqueda_intervalo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     desde = request.args['desde']
     hasta = request.args['hasta']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     if desde == '' or hasta == '':
@@ -139,7 +133,7 @@ def historial_busqueda_intervalo(datos_usuario):
     else:
         query, parametro = historial.busqueda_historial_intervalos(filtro, desde, hasta)
         movimientos = instancia_conexion.todos_parametros(cursor, query, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('historial_intervalos.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimientos, desde=desde, hasta=hasta)
@@ -153,8 +147,7 @@ def historial_busqueda_intervalo_categoria(datos_usuario):
     desde = request.args['desde']
     hasta = request.args['hasta']
     categoria = int(request.args['categoria'])
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     if desde == '' or hasta == '':
@@ -162,7 +155,7 @@ def historial_busqueda_intervalo_categoria(datos_usuario):
     else:
         query, parametro = historial.busqueda_historial_intervalos_Categoria(filtro, desde, hasta, categoria)
         movimientos = instancia_conexion.todos_parametros(cursor, query, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('historial_intervalos_categoria.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimientos, desde=desde, hasta=hasta, categoria=categoria)
