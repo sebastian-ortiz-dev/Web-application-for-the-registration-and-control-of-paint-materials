@@ -23,18 +23,19 @@ proveedor = Proveedor()
 categorias = Categoria()
 medida = Medida()
 listado = Tipo_listado()
+instancia_conexion = Conexion()
+
 # Ruta que lista los productos con su proveedor, esta es la vista del Administrador
 @inventario_route.route('/')
 @login_requerido
 @validation_jwt
 def index(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()   
+    pool_db, cursor = instancia_conexion.iniciar_conexion()   
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto = instancia_conexion.todos(cursor, productor.listar())
     categoria = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('index.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -44,13 +45,12 @@ def index(datos_usuario):
 @login_requerido
 @validation_jwt
 def trabajador(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto = instancia_conexion.todos(cursor, productor.listar())
     categoria = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('trabajador.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -60,14 +60,13 @@ def trabajador(datos_usuario):
 @login_requerido
 @validation_jwt
 def tipo_listado(datos_usuario, categoria):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto, parametro = listado.listar(categoria)
     producto = instancia_conexion.todos_parametros(cursor, texto, parametro)
     categoria_todas = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('productos_filtro.html', productos=producto, set_categoria=categoria_todas, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
@@ -79,14 +78,13 @@ def tipo_listado(datos_usuario, categoria):
 def producto_filtro_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     categoria = request.args['categoria']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     texto, parametro = productor.busqueda_productos_categoria(filtro, categoria)
     producto = instancia_conexion.todos_parametros(cursor, texto, parametro)
     categoria_todas = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('productos_filtro.html',  productos=producto, set_categoria=categoria_todas, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
@@ -96,8 +94,7 @@ def producto_filtro_busqueda(datos_usuario):
 @login_requerido
 @validation_jwt
 def producto_proveedores(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()    
+    pool_db, cursor = instancia_conexion.iniciar_conexion()    
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     producto = instancia_conexion.todos(cursor, productor.listar())
@@ -113,7 +110,7 @@ def producto_proveedores(datos_usuario):
     else:
         producto = False
         set_proveedores = False
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('por_proveedor_producto.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario)
@@ -124,8 +121,7 @@ def producto_proveedores(datos_usuario):
 @validation_jwt
 def producto_proveedores_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     texto, parametro = productor.busqueda_productos(filtro)  
@@ -141,7 +137,7 @@ def producto_proveedores_busqueda(datos_usuario):
     else:
         producto = False
         set_proveedores = False
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('por_producto_buscado.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario)
@@ -151,8 +147,7 @@ def producto_proveedores_busqueda(datos_usuario):
 @login_requerido
 @validation_jwt
 def editar(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()    
+    pool_db, cursor = instancia_conexion.iniciar_conexion()    
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto, parametro = productor.obtener_uno(id) 
@@ -160,7 +155,7 @@ def editar(datos_usuario, id):
     proveedores = instancia_conexion.todos(cursor, proveedor.listar_varios())
     categoria = instancia_conexion.todos(cursor, categorias.listar())
     medidas = instancia_conexion.todos(cursor, medida.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('editar_producto.html', producto=producto_detalles, set_proveedores=proveedores, categorias=categoria, medidas=medidas, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -199,13 +194,12 @@ def cambios_hecho(datos_usuario, id):
         imagen.save(os.path.join(current_app.config['UPLOAD_FOLDER'], subcarpeta,filename))
     else:
         filename = request.form.get('foto_actual')
-
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()    
+   
+    pool_db, cursor = instancia_conexion.iniciar_conexion()    
     producto, parametro = productor.modificar_producto(id, nombre, detalles, precio, cantidad, date.today(), filename, distribuidor, categoria, cantidad_minima, medida)
     instancia_conexion.registrar(cursor, producto, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
-    instancia_conexion.cerrar_conexion(cursor)
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     if resultado:
         flash('Producto modificado exitosamente')
         if datos_usuario['nivel_acceso'] == 'Administrador':
@@ -221,13 +215,12 @@ def cambios_hecho(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def eliminar(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()  
+    pool_db, cursor = instancia_conexion.iniciar_conexion()  
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     producto, parametro = productor.obtener_uno(id) 
     producto_detalles = instancia_conexion.uno(cursor, producto, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('eliminar_producto.html', producto=producto_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -237,12 +230,11 @@ def eliminar(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def delete_producto(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()  
+    pool_db, cursor = instancia_conexion.iniciar_conexion()  
     producto, parametro = productor.eliminar_producto(id) 
     instancia_conexion.registrar(cursor, producto, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
-    instancia_conexion.cerrar_conexion(cursor)
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash("Producto eliminado correctamente")
@@ -259,14 +251,13 @@ def delete_producto(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def detalles(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()   
+    pool_db, cursor = instancia_conexion.iniciar_conexion()   
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)  
     producto, parametro = productor.obtener_uno(id)
     producto_detalles = instancia_conexion.uno(cursor, producto, parametro)
     print(producto_detalles)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('detalle.html', producto=producto_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -277,14 +268,13 @@ def detalles(datos_usuario, id):
 @validation_jwt
 def busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()   
+    pool_db, cursor = instancia_conexion.iniciar_conexion()   
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     producto, parametro = productor.busqueda_productos(filtro)
     resultado_busqueda = instancia_conexion.todos_parametros(cursor, producto, parametro)
     categoria = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     if datos_usuario['nivel_acceso'] == "Administrador":
