@@ -1,5 +1,4 @@
-from flask import redirect, url_for, flash, session, request
-import psycopg2
+from flask import redirect, flash, request
 from psycopg2.pool import ThreadedConnectionPool
 import os
 from dotenv import load_dotenv
@@ -57,17 +56,3 @@ class Conexion():
         self.connection_db.putconn(pool_db)
         #self.db.close()
         
-
-"""def registrar(self, ejecuta, texto, parametros):
-        try:
-            ejecuta.execute(texto, parametros)
-            self.db.commit()
-            return True
-        except Exception as e:
-            self.db.rollback()
-            print("Ha ocurrido un error al conectar a la base de datos: ", e)
-            flash("¡Error! Ha ocurrido un error al realizar los cambios")
-            if session['nivel_acceso'] == 'Administrador':
-                return redirect(url_for('inventario.index'))
-            else:
-                return redirect(url_for('inventario.trabajador'))"""

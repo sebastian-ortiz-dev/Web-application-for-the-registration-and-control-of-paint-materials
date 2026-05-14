@@ -12,19 +12,20 @@ configuracion_route = Blueprint('configuracion', __name__, template_folder='temp
 productor = Producto()
 medida = Medida()
 categoria = Categoria()
+instancia_conexion = Conexion()
 
 @configuracion_route.route("/configuracion")
 @login_requerido
 @validation_jwt
 def configuracion(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto = medida.listar()
     medidas = instancia_conexion.todos(cursor, texto)
     texto2 = categoria.listar()
     categorias = instancia_conexion.todos(cursor, texto2)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('configuracion.html', medidas=medidas, categorias=categorias, nombre=name, imagen=imagen_usuario, alerta=alerta)
@@ -33,10 +34,10 @@ def configuracion(datos_usuario):
 @login_requerido
 @validation_jwt
 def agregar_categoria(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('agregar_categoria.html', nombre=name, imagen=imagen_usuario, alerta=alerta)
@@ -46,11 +47,11 @@ def agregar_categoria(datos_usuario):
 @validation_jwt
 def crear_categoria(datos_usuario):
     nombre_categoria = request.form['nombre']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     texto, parametro = categoria.crear(nombre_categoria)
     instancia_conexion.registrar(cursor, texto, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash('Categoria creada')
@@ -63,12 +64,12 @@ def crear_categoria(datos_usuario):
 @login_requerido
 @validation_jwt
 def editar_categoria(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto, parametro = categoria.obtener_uno(id)
     categorias = instancia_conexion.uno(cursor, texto, parametro)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('editar_categoria.html', categoria=categorias, nombre=name, imagen=imagen_usuario, alerta=alerta)
@@ -78,11 +79,11 @@ def editar_categoria(datos_usuario, id):
 @validation_jwt
 def modificar_categoria(datos_usuario, id):
     nombre = request.form['nombre']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     texto, parametro = categoria.modificar(nombre, id)
     instancia_conexion.registrar(cursor, texto, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash("Categoria modificada")
@@ -96,10 +97,10 @@ def modificar_categoria(datos_usuario, id):
 @login_requerido
 @validation_jwt
 def agregar_medida(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('agregar_medida.html', nombre=name, imagen=imagen_usuario, alerta=alerta)
@@ -108,12 +109,12 @@ def agregar_medida(datos_usuario):
 @login_requerido
 @validation_jwt
 def editar_medida(datos_usuario, id):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto, parametro = medida.obtener_uno(id)
     medidas = instancia_conexion.uno(cursor, texto, parametro)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('editar_medida.html', medida=medidas, nombre=name, imagen=imagen_usuario, alerta=alerta)
@@ -123,11 +124,11 @@ def editar_medida(datos_usuario, id):
 @validation_jwt
 def modificar_medida(id, datos_usuario):
     nombre = request.form['nombre']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     texto, parametro = medida.modificar(nombre, id)
     instancia_conexion.registrar(cursor, texto, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash("Categoria modificada")
@@ -142,11 +143,11 @@ def modificar_medida(id, datos_usuario):
 @validation_jwt
 def crear_medida(datos_usuario):
     nombre_medida = request.form['nombre']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     texto, parametro = medida.crear(nombre_medida)
     instancia_conexion.registrar(cursor, texto, parametro)
-    resultado = instancia_conexion.ejecutar_cambio()
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash('Medida creada')
