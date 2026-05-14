@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, request
+from flask import Blueprint, render_template, request
 from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
@@ -16,19 +16,19 @@ productor = Producto()
 proveedor = Proveedor()
 categorias = Categoria()
 listado = Tipo_listado()
+instancia_conexion = Conexion()
 # ruta con la vista de los productos sin movimientos en los ultimos treinta dias
 @sin_movimiento_route.route('/sin_movimientos')
 @login_requerido
 @validation_jwt
 def no_movimientos(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     productos = productor.listar_sin_movimiento()
     producto = instancia_conexion.todos(cursor, productos)
     categoria = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('sin_movimientos.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -38,14 +38,13 @@ def no_movimientos(datos_usuario):
 @login_requerido
 @validation_jwt
 def listado_filtro(datos_usuario, categoria):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     tipo, parametro = listado.listar_no_movimientos(categoria)
     producto = instancia_conexion.todos_parametros(cursor, tipo, parametro)
     categoria_todo = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('sin_movimientos_filtro.html', productos=producto, set_categoria=categoria_todo, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -55,8 +54,7 @@ def listado_filtro(datos_usuario, categoria):
 @login_requerido
 @validation_jwt
 def sin_movimiento_proveedores(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     productos = productor.listar_sin_movimiento()
@@ -72,7 +70,7 @@ def sin_movimiento_proveedores(datos_usuario):
     else:
         producto = False
         proveedores = False
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('por_proveedores.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=proveedores, nombre=name, imagen=imagen_usuario)
@@ -83,14 +81,13 @@ def sin_movimiento_proveedores(datos_usuario):
 @validation_jwt
 def busqueda_no_movimientos(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()   
+    pool_db, cursor = instancia_conexion.iniciar_conexion()   
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto, parametro = productor.busqueda_productos_sin_movimiento(filtro)
     resultado_busqueda = instancia_conexion.todos_parametros(cursor, producto, parametro)
     categoria = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('sin_movimientos.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -102,14 +99,13 @@ def busqueda_no_movimientos(datos_usuario):
 def movimientos_filtro_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     categoria = request.args['categoria']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)  
     productos, parametro = productor.busqueda_productos_categoria_sin_movimientos(filtro, categoria)
     producto = instancia_conexion.todos_parametros(cursor, productos, parametro)
     categoria_todo = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('sin_movimientos_filtro.html',  productos=producto, set_categoria=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
@@ -120,8 +116,7 @@ def movimientos_filtro_busqueda(datos_usuario):
 @validation_jwt
 def proveedores_sin_movimiento_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto, parametro = productor.busqueda_productos_sin_movimiento(filtro)
@@ -137,7 +132,7 @@ def proveedores_sin_movimiento_busqueda(datos_usuario):
     else:
         resultado_busqueda = False
         proveedores = False
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('producto_proveedor_sin_movimiento.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, proveedores=proveedores, nombre=name, imagen=imagen_usuario)
