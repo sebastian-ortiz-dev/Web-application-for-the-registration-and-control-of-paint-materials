@@ -17,18 +17,19 @@ productor = Producto()
 proveedor = Proveedor()
 listado = Tipo_listado()
 categorias = Categoria()
+instancia_conexion = Conexion()
+
 @minimo_route.route('/alerta')
 @login_requerido
 @validation_jwt
 def alerta(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto = productor.listar_minimo()
     productos_minimo = instancia_conexion.todos(cursor, producto)
     categoria = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('minimo.html', productos=productos_minimo, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -37,14 +38,13 @@ def alerta(datos_usuario):
 @login_requerido
 @validation_jwt
 def filtro(datos_usuario, categoria):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     tipo, parametro = listado.listar_minimo(categoria)
     producto = instancia_conexion.todos_parametros(cursor, tipo, parametro)
     categoria_todo = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('minimo_filtro.html', productos=producto, categorias_todas=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
@@ -54,8 +54,7 @@ def filtro(datos_usuario, categoria):
 @login_requerido
 @validation_jwt
 def por_proveedores(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto = productor.listar_minimo()
@@ -71,7 +70,7 @@ def por_proveedores(datos_usuario):
     else:
         producto = False
         set_proveedores = False
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('listar_minimo_proveedor.html', productos=productos_minimo, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario)
@@ -82,14 +81,13 @@ def por_proveedores(datos_usuario):
 @validation_jwt
 def busqueda_minimo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()   
+    pool_db, cursor = instancia_conexion.iniciar_conexion()   
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto, parametro = productor.busqueda_productos_minimo(filtro)
     resultado_busqueda = instancia_conexion.todos_parametros(cursor, producto, parametro)
     categoria = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('minimo.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
@@ -101,14 +99,13 @@ def busqueda_minimo(datos_usuario):
 def minimo_filtro_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     categoria = request.args['categoria']
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)  
     producto, parametro = productor.busqueda_minimo_categoria(filtro, categoria)
     resultado_busqueda = instancia_conexion.todos_parametros(cursor, producto, parametro)
     categoria_todo = instancia_conexion.todos(cursor, categorias.listar())
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('minimo_filtro.html',  productos=resultado_busqueda, categorias_todas=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
@@ -119,8 +116,7 @@ def minimo_filtro_busqueda(datos_usuario):
 @validation_jwt
 def producto_minimo_proveedores_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)  
     producto, parametro = productor.busqueda_productos_minimo(filtro)
@@ -136,7 +132,7 @@ def producto_minimo_proveedores_busqueda(datos_usuario):
     else:
         producto = False
         set_proveedores = False
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('minimo_producto_proveedor.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario)
