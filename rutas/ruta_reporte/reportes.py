@@ -14,13 +14,14 @@ reporte_route = Blueprint('reporte', __name__, template_folder='templates')
 productor = Producto()
 historial = Historia_Movimientos()
 perfil = Usuario()
+instancia_conexion = Conexion()
+
 # Ruta con la generacion de reportes
 @reporte_route.route('/reporte')
 @login_requerido
 @validation_jwt
 def reporte_diario(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     # cantidad de hoy en bs
     producto = instancia_conexion.todos(cursor, productor.obtener_cantidad_productos())
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -50,7 +51,7 @@ def reporte_diario(datos_usuario):
     texto, parametro = perfil.obtener_nombre(datos_usuario['sub'])
     perfiles = instancia_conexion.uno(cursor, texto, parametro)
     print(perfiles)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("/components/formato_reporte_diario.html")  
     plantilla = template.render(valor=producto, cantidad_stock_critico=alerta, entrada_cantidad=entradas, entradas=cantidad_entradas, salida_cantidad=salidas, salidas=cantidad_salidas, ajuste_cantidad=ajustes, ajuste_aumento=cantidad_aumento, ajuste_disminucion=cantidad_disminucion, devoluciones_cantidad=devoluciones, devoluciones_bs=cantidad_devoluciones, fecha=fecha, hora=hora_exacta, perfil=perfiles)
@@ -66,8 +67,7 @@ def reporte_diario(datos_usuario):
 @login_requerido
 @validation_jwt
 def reporte_mensual(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     producto = instancia_conexion.todos(cursor, productor.obtener_cantidad_productos())
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
@@ -102,7 +102,7 @@ def reporte_mensual(datos_usuario):
     hora_exacta = hora.strftime("%H:%M:%S")
     texto, parametro = perfil.obtener_nombre(datos_usuario['sub'])
     perfiles = instancia_conexion.uno(cursor, texto, parametro)
-    instancia_conexion.cerrar_conexion(cursor)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("components/formato_reporte_mensual.html")  
     plantilla = template.render(mes=meses[mes-1], anio=anio, saldo_inicial=valor_inicial_inventario, valor_final=producto, critico=alerta, sin_movimiento=productos_movimientos, cantidad_sin_movimiento=sin_movimientos_bs, rotacion_indice=indice_rotacion, cantidad_entradas=total_entradas, entradas=total_entradas_bs,  cantidad_salidas=total_salidas, salidas=total_salidas_bs, cantidad_ajustes=total_ajustes, aumento=total_ajuste_aumento, disminucion=total_ajuste_disminucion, cantidad_devoluciones=total_devoluciones, devolucion=total_devoluciones_bs, fecha_actual=fecha, hora=hora_exacta, perfil=perfiles)

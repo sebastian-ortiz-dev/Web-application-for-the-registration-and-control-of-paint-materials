@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
