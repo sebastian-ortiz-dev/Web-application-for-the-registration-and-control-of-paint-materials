@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
 from model_db.model_class.model_proveedor import Proveedor
@@ -16,7 +15,7 @@ listado = Tipo_listado()
 instancia_conexion = Conexion()
 # Ruta con la vista principal con los proveedores
 @proveedor_route.route('/proveedores')
-@login_requerido
+
 @validation_jwt
 def proveedores(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -27,10 +26,10 @@ def proveedores(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 @proveedor_route.route('/listado_proveedores/<int:categoria>')
-@login_requerido
+
 @validation_jwt
 def tipo_listado(datos_usuario, categoria):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -41,11 +40,11 @@ def tipo_listado(datos_usuario, categoria):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta con la vista para crear un nuevo proveedor
 @proveedor_route.route('/nuevo_proveedor')
-@login_requerido
+
 @validation_jwt
 def proveedor_nuevo(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -54,11 +53,11 @@ def proveedor_nuevo(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('agregar_proveedor.html', alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('agregar_proveedor.html', alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta para obtener los datos y guardarlos en la DB
 @proveedor_route.route('/crear_proveedor', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def crear_proveedor(datos_usuario):
     nombre = request.form['nombre']
@@ -81,7 +80,7 @@ def crear_proveedor(datos_usuario):
     
 # Ruta para mostrar la vista para editar un proveedor
 @proveedor_route.route('/edit_proveedor/<int:id>')
-@login_requerido
+
 @validation_jwt
 def editar_proveedor(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -92,11 +91,11 @@ def editar_proveedor(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('editar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('editar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta para obtener los datos y guardas los cambios
 @proveedor_route.route('/cambios_proveedor/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def cambio_proveedor(datos_usuario, id):
     nombre = request.form['nombre']
@@ -119,7 +118,7 @@ def cambio_proveedor(datos_usuario, id):
 
 # Ruta para mostrar el proveedor a "eliminar"
 @proveedor_route.route('/eliminar_proveedor/<int:id>')
-@login_requerido
+
 @validation_jwt
 def eliminar_proveedor(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -130,11 +129,11 @@ def eliminar_proveedor(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('eliminar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('eliminar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta para eliminar el proveedor de la DB
 @proveedor_route.route('/delete_proveedor/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def delete_proveedor(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()    
@@ -152,7 +151,7 @@ def delete_proveedor(datos_usuario, id):
 
 # Ruta que hace uso de la barra de busqueda
 @proveedor_route.route('/buscar_proveedor')
-@login_requerido
+
 @validation_jwt
 def barra_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -164,4 +163,4 @@ def barra_busqueda(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('proveedores.html', lista_proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
