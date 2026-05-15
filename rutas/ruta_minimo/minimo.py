@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, request
+from flask import Blueprint, render_template, request
 from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
@@ -20,7 +20,7 @@ categorias = Categoria()
 instancia_conexion = Conexion()
 
 @minimo_route.route('/alerta')
-@login_requerido
+
 @validation_jwt
 def alerta(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -32,10 +32,10 @@ def alerta(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('minimo.html', productos=productos_minimo, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('minimo.html', productos=productos_minimo, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 @minimo_route.route('/tipo_minimo/<int:categoria>')
-@login_requerido
+
 @validation_jwt
 def filtro(datos_usuario, categoria):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -47,11 +47,11 @@ def filtro(datos_usuario, categoria):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('minimo_filtro.html', productos=producto, categorias_todas=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
+    return render_template('minimo_filtro.html', productos=producto, categorias_todas=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Filtro que lista cada producto minimo segun su proveedor
 @minimo_route.route('/por_proveedores_minimo')
-@login_requerido
+
 @validation_jwt
 def por_proveedores(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -73,11 +73,11 @@ def por_proveedores(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('listar_minimo_proveedor.html', productos=productos_minimo, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario)
+    return render_template('listar_minimo_proveedor.html', productos=productos_minimo, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta de barra de busqueda de productos
 @minimo_route.route('/search_bar_minimo')
-@login_requerido
+
 @validation_jwt
 def busqueda_minimo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -90,11 +90,11 @@ def busqueda_minimo(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('minimo.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('minimo.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Barra de busqueda pero con filtro aplicado
 @minimo_route.route('/filtro_minimum_search')
-@login_requerido
+
 @validation_jwt
 def minimo_filtro_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -108,11 +108,11 @@ def minimo_filtro_busqueda(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('minimo_filtro.html',  productos=resultado_busqueda, categorias_todas=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
+    return render_template('minimo_filtro.html',  productos=resultado_busqueda, categorias_todas=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Barra de busqueda que lista los productos minimos segun su distribuidor
 @minimo_route.route('/por_proveedores_search_minimo')
-@login_requerido
+
 @validation_jwt
 def producto_minimo_proveedores_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -135,4 +135,4 @@ def producto_minimo_proveedores_busqueda(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('minimo_producto_proveedor.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario)
+    return render_template('minimo_producto_proveedor.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
