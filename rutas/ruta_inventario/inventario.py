@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, current_app
-from secure.secure_login import login_requerido
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from middleware.auth import validation_jwt
 from secure.process_image import image_verification
 from werkzeug.utils import secure_filename
@@ -27,7 +26,7 @@ instancia_conexion = Conexion()
 
 # Ruta que lista los productos con su proveedor, esta es la vista del Administrador
 @inventario_route.route('/')
-@login_requerido
+
 @validation_jwt
 def index(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()   
@@ -38,11 +37,11 @@ def index(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('index.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('index.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta que lista los productos con su distribuidor, esta es la vista del Trabajador
 @inventario_route.route('/trabajador')
-@login_requerido
+
 @validation_jwt
 def trabajador(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -53,11 +52,11 @@ def trabajador(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('trabajador.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('trabajador.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Lista por categoria 
 @inventario_route.route('/tipo/<int:categoria>')
-@login_requerido
+
 @validation_jwt
 def tipo_listado(datos_usuario, categoria):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -69,11 +68,11 @@ def tipo_listado(datos_usuario, categoria):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('productos_filtro.html', productos=producto, set_categoria=categoria_todas, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
+    return render_template('productos_filtro.html', productos=producto, set_categoria=categoria_todas, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Busqueda por filtro
 @inventario_route.route('/filtro_search')
-@login_requerido
+
 @validation_jwt
 def producto_filtro_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -87,11 +86,11 @@ def producto_filtro_busqueda(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('productos_filtro.html',  productos=producto, set_categoria=categoria_todas, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
+    return render_template('productos_filtro.html',  productos=producto, set_categoria=categoria_todas, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Filtro que lista cada producto segun su proveedor (En un futuro optimizar)
 @inventario_route.route('/por_proveedores')
-@login_requerido
+
 @validation_jwt
 def producto_proveedores(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()    
@@ -113,11 +112,11 @@ def producto_proveedores(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('por_proveedor_producto.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario)
+    return render_template('por_proveedor_producto.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Barra de busqueda que lista el producto segun su proveedor
 @inventario_route.route('/por_proveedores_search')
-@login_requerido
+
 @validation_jwt
 def producto_proveedores_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -140,11 +139,11 @@ def producto_proveedores_busqueda(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('por_producto_buscado.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario)
+    return render_template('por_producto_buscado.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=set_proveedores, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
     
 # Ruta que renderiza la plantilla con los datos del producto a editar
 @inventario_route.route('/editar/<int:id>')
-@login_requerido
+
 @validation_jwt
 def editar(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()    
@@ -158,11 +157,11 @@ def editar(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('editar_producto.html', producto=producto_detalles, set_proveedores=proveedores, categorias=categoria, medidas=medidas, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('editar_producto.html', producto=producto_detalles, set_proveedores=proveedores, categorias=categoria, medidas=medidas, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta que contiene las consultas SQL y los datos para hacer los cambios para editar el producto
 @inventario_route.route('/cambios_producto/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def cambios_hecho(datos_usuario, id):
     imagen = request.files['imagen']
@@ -212,7 +211,7 @@ def cambios_hecho(datos_usuario, id):
 
 # Ruta que renderiza la plantilla para eliminar un producto
 @inventario_route.route('/eliminar/<int:id>')
-@login_requerido
+
 @validation_jwt
 def eliminar(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()  
@@ -223,11 +222,11 @@ def eliminar(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('eliminar_producto.html', producto=producto_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('eliminar_producto.html', producto=producto_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta que elimina logicamente el producto de la base de datos
 @inventario_route.route('/delete_producto/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def delete_producto(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()  
@@ -248,7 +247,7 @@ def delete_producto(datos_usuario, id):
 
 # Ruta que renderiza una plantilla con los detalles completos del producto
 @inventario_route.route('/detalles/<int:id>')
-@login_requerido
+
 @validation_jwt
 def detalles(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()   
@@ -260,11 +259,11 @@ def detalles(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('detalle.html', producto=producto_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('detalle.html', producto=producto_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta de barra de busqueda de productos
 @inventario_route.route('/search_bar')
-@login_requerido
+
 @validation_jwt
 def busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -278,6 +277,6 @@ def busqueda(datos_usuario):
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     if datos_usuario['nivel_acceso'] == "Administrador":
-        return render_template('index.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+        return render_template('index.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
     else:
-        return render_template('trabajador.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+        return render_template('trabajador.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
