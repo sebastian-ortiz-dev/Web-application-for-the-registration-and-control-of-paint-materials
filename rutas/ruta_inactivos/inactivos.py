@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
-from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
 from model_db.model_class.model_producto import Producto
@@ -17,7 +16,7 @@ perfil = Usuario()
 instancia_conexion = Conexion()
 
 @inactivos_route.route("/inactivos")
-@login_requerido
+
 @validation_jwt
 def inactivos(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -28,11 +27,11 @@ def inactivos(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('inactivos.html', productos=producto, nombre=name, imagen=imagen_usuario, alerta=alerta)
+    return render_template('inactivos.html', productos=producto, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
 
 # Ruta que renderiza la plantilla para eliminar un producto
 @inactivos_route.route('/reintegrar_producto/<int:id>')
-@login_requerido
+
 @validation_jwt
 def reintegrar_producto(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()  
@@ -43,10 +42,10 @@ def reintegrar_producto(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('recuperar_producto.html', producto=producto_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('recuperar_producto.html', producto=producto_detalles, access_level=datos_usuario['nivel_acceso'], alerta=alerta, nombre=name, imagen=imagen_usuario)
 
 @inactivos_route.route('/recuperar_producto/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def recuperar_producto(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()  
@@ -63,7 +62,7 @@ def recuperar_producto(datos_usuario, id):
 
 # Ruta de barra de busqueda de productos inactivos
 @inactivos_route.route('/busqueda_producto_inactivo')
-@login_requerido
+
 @validation_jwt
 def busqueda_producto_inactivo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -75,10 +74,10 @@ def busqueda_producto_inactivo(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('inactivos.html', productos=resultado_busqueda, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('inactivos.html', productos=resultado_busqueda, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 @inactivos_route.route("/inactivos_proveedor")
-@login_requerido
+
 @validation_jwt
 def inactivo_proveedor(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -89,11 +88,11 @@ def inactivo_proveedor(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('inactivos_proveedores.html', proveedores=proveedores, nombre=name, imagen=imagen_usuario, alerta=alerta)
+    return render_template('inactivos_proveedores.html', proveedores=proveedores, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
 
 # Ruta para recuperar el proveedor
 @inactivos_route.route('/reintegrar_proveedor/<int:id>')
-@login_requerido
+
 @validation_jwt
 def reintegrar_proveedor(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -104,10 +103,10 @@ def reintegrar_proveedor(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('recuperar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('recuperar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 @inactivos_route.route('/recuperar_proveedor/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def recuperar_proveedor(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()    
@@ -125,7 +124,7 @@ def recuperar_proveedor(datos_usuario, id):
 
 # Ruta que busca los proveedores inactivos
 @inactivos_route.route('/buscar_proveedor_inactivo')
-@login_requerido
+
 @validation_jwt
 def busqueda_proveedor_inactivo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -137,10 +136,10 @@ def busqueda_proveedor_inactivo(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('inactivos_proveedores.html', proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('inactivos_proveedores.html', proveedores=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 @inactivos_route.route("/inactivos_perfiles")
-@login_requerido
+
 @validation_jwt
 def inactivo_perfil(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -151,10 +150,10 @@ def inactivo_perfil(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('perfil_inactivo.html', usuarios=perfiles, nombre=name, imagen=imagen_usuario, alerta=alerta)
+    return render_template('perfil_inactivo.html', usuarios=perfiles, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
 
 @inactivos_route.route('/reintegrar_perfil/<int:id>')
-@login_requerido
+
 @validation_jwt
 def reintegrar_perfil(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -165,11 +164,11 @@ def reintegrar_perfil(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('recuperar_perfil.html', usuario=perfiles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('recuperar_perfil.html', usuario=perfiles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta que reintegra el perfil a la aplicacion
 @inactivos_route.route('/recuperar_perfil/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def recuperar_perfil(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -187,7 +186,7 @@ def recuperar_perfil(datos_usuario, id):
 
 # Ruta que busca los perfiles inactivos
 @inactivos_route.route('/busqueda_perfiles_inactivo')
-@login_requerido
+
 @validation_jwt
 def busqueda_perfil_inactivo(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -199,4 +198,4 @@ def busqueda_perfil_inactivo(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('perfil_inactivo.html', usuarios=perfiles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('perfil_inactivo.html', usuarios=perfiles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
