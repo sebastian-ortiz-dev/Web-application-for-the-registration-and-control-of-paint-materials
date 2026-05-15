@@ -1,6 +1,4 @@
-from flask import redirect, url_for, flash
 from argon2 import PasswordHasher
-from model_db.conexion import Conexion
 
 ph = PasswordHasher()
 class Hash_password(object):

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, make_response
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from dotenv import load_dotenv
 from model_db.conexion import Conexion
 from model_db.model_class.model_usuario import *
