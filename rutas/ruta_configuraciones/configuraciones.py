@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
-from secure.secure_login import login_requerido
 from middleware.auth import *
 from model_db.conexion import Conexion
 from model_db.model_class.model_producto import Producto

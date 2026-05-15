@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from secure.secure_login import login_requerido
+#from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
 from model_db.model_class.model_producto import *
