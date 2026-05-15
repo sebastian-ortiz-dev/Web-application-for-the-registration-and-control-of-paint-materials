@@ -97,6 +97,7 @@ def crear_usuario(datos_usuario):
     acceso = request.form['acceso']
     filename = None
     subcarpeta = 'perfil'
+    verification = True
     if acceso == " ":
         flash("Eliga un perfil para el nuevo usuario")
         return redirect(url_for('usuario.usuario_nuevo'))
@@ -105,9 +106,13 @@ def crear_usuario(datos_usuario):
         flash('¡Error! Las claves no coinciden') 
         return redirect(url_for('usuario.usuario_nuevo'))
     
-    if not image_verification(imagen):
+    if imagen:
+        verification = image_verification(imagen.read())
+
+    if not verification:
         flash('Formato de imagen no permitido')
         return redirect(url_for('usuario.usuario_nuevo'))
+
 
     if imagen != "" and imagen and allowed_file(imagen.filename):
         filename = secure_filename(imagen.filename)
@@ -175,7 +180,7 @@ def cambios_usuario(datos_usuario, id):
 
     if not verification:
         flash('Formato de imagen no permitido')
-        return redirect(url_for('usuario.usuario_nuevo'))
+        return redirect(url_for('usuario.editar_usuario', id=id))
 
     if imagen and allowed_file(imagen.filename):
         filename = secure_filename(imagen.filename)
