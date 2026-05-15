@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, current_app
-from secure.secure_login import login_requerido
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from middleware.auth import validation_jwt
 from secure.process_image import *
 from werkzeug.utils import secure_filename
@@ -28,7 +27,7 @@ instancia_conexion = Conexion()
 
 # Ruta que lista la vista principal de los movimientos
 @movimiento_route.route('/movimiento')
-@login_requerido
+
 @validation_jwt
 def movimiento(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -47,11 +46,11 @@ def movimiento(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('movimiento.html', nombre=name, imagen=imagen_usuario, alerta=alerta, movimiento=movimiento_todo, productos=producto, distribuidores=proveedores, categorias=categoria, medidas=medidas)
+    return render_template('movimiento.html', nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta, movimiento=movimiento_todo, productos=producto, distribuidores=proveedores, categorias=categoria, medidas=medidas)
 
 # Ruta que registra una entrada en la DB de un producto existente
 @movimiento_route.route('/registrar_entrada_existente', methods=["POST"])
-@login_requerido
+
 @validation_jwt
 def registrar_entrada(datos_usuario):
     tipo_movimiento = 1
@@ -67,7 +66,7 @@ def registrar_entrada(datos_usuario):
     instancia_conexion.registrar(cursor, productos_modificado, parametros)
     recupera, datos = productor.obtener_uno(producto)
     recuperar_producto = instancia_conexion.uno(cursor, recupera, datos)
-    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), session['id_usuario'], motivo, tipo_movimiento)
+    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
     instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
@@ -80,7 +79,7 @@ def registrar_entrada(datos_usuario):
 
 # Ruta que registra una entrada en la DB de un producto que no existe     
 @movimiento_route.route('/registrar_entrada_no_existente', methods=["POST"])
-@login_requerido
+
 @validation_jwt
 def registrar_entrada_no_existente(datos_usuario):
     # SEPARAR LOS DOS FORMULARIOS, IDEA: PARA LOS PRODUCTOS QUE NO EXISTEN AUN, DEBERIA PRIMERO CREARLOS Y DESPUES LISTARLOS HACER UN IF QUE VEA SI ESE PRODUCTO EXISTE EN ESA LISTA Y CREAR LA ENTRADA
@@ -120,7 +119,7 @@ def registrar_entrada_no_existente(datos_usuario):
     instancia_conexion.registrar(cursor, productos, parametro)
     consulta, parametros = productor.obtene_por_nombre(nombre, detalles, precio, cantidad, cantidad_minima)
     recuperar_producto = instancia_conexion.uno(cursor, consulta, parametros)
-    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), session['id_usuario'], motivo, tipo_movimiento)
+    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
     instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
@@ -134,7 +133,7 @@ def registrar_entrada_no_existente(datos_usuario):
 
 # Ruta que registra una salida en la DB
 @movimiento_route.route('/registrar_salida', methods=["POST"])
-@login_requerido
+
 @validation_jwt
 def registrar_salida(datos_usuario):
     producto = request.form['producto']
@@ -152,7 +151,7 @@ def registrar_salida(datos_usuario):
         instancia_conexion.registrar(cursor, consulta, parametros)
         consulta, parametros = productor.obtener_uno(producto)
         recuperar_producto = instancia_conexion.uno(cursor, consulta, parametros)
-        registrar_movimiento,parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), session['id_usuario'], motivo, tipo_movimiento)
+        registrar_movimiento,parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
         instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
         resultado = instancia_conexion.ejecutar_cambio(pool_db)
         instancia_conexion.cerrar_conexion(cursor, pool_db)
@@ -168,7 +167,7 @@ def registrar_salida(datos_usuario):
 
 # Ruta que registra una devolucion en la DB  
 @movimiento_route.route("/registrar_devolucion", methods=["POST"])
-@login_requerido
+
 @validation_jwt
 def registrar_devolucion(datos_usuario):
     producto = request.form['producto']
@@ -195,7 +194,7 @@ def registrar_devolucion(datos_usuario):
     instancia_conexion.registrar(cursor, consulta, parametro)
     productos, parametro = productor.obtener_uno(producto)
     recuperar_producto = instancia_conexion.uno(cursor, productos, parametro)
-    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), session['id_usuario'], motivo, tipo_movimiento)
+    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
     instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
@@ -209,7 +208,7 @@ def registrar_devolucion(datos_usuario):
 
 # Ruta que registra un ajuste en la DB
 @movimiento_route.route("/registrar_Ajuste", methods=["POST"])
-@login_requerido
+
 @validation_jwt
 def registrar_Ajuste(datos_usuario):
     producto = request.form['producto']
@@ -237,7 +236,7 @@ def registrar_Ajuste(datos_usuario):
     instancia_conexion.registrar(cursor, consulta, parametro)
     productos, parametro = productor.obtener_uno(producto)
     recuperar_producto = instancia_conexion.uno(cursor, productos, parametro)
-    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), session['id_usuario'], motivo, tipo_movimiento)
+    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
     instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
