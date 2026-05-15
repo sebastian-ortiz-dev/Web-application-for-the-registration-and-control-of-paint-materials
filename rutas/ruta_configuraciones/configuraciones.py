@@ -15,7 +15,6 @@ categoria = Categoria()
 instancia_conexion = Conexion()
 
 @configuracion_route.route("/configuracion")
-@login_requerido
 @validation_jwt
 def configuracion(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -28,10 +27,9 @@ def configuracion(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('configuracion.html', medidas=medidas, categorias=categorias, nombre=name, imagen=imagen_usuario, alerta=alerta)
+    return render_template('configuracion.html', medidas=medidas, categorias=categorias, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
 
 @configuracion_route.route("/agregar_categoria")
-@login_requerido
 @validation_jwt
 def agregar_categoria(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -40,10 +38,9 @@ def agregar_categoria(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('agregar_categoria.html', nombre=name, imagen=imagen_usuario, alerta=alerta)
+    return render_template('agregar_categoria.html', nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
 
 @configuracion_route.route("/crear_categoria", methods=['POST'])
-@login_requerido
 @validation_jwt
 def crear_categoria(datos_usuario):
     nombre_categoria = request.form['nombre']
@@ -61,7 +58,6 @@ def crear_categoria(datos_usuario):
         return redirect(url_for("configuracion.agregar_categoria"))
     
 @configuracion_route.route("/editar_categoria/<int:id>")
-@login_requerido
 @validation_jwt
 def editar_categoria(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -72,10 +68,9 @@ def editar_categoria(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('editar_categoria.html', categoria=categorias, nombre=name, imagen=imagen_usuario, alerta=alerta)
+    return render_template('editar_categoria.html', categoria=categorias, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
 
 @configuracion_route.route("/modificar_categoria/<int:id>", methods=['POST'])
-@login_requerido
 @validation_jwt
 def modificar_categoria(datos_usuario, id):
     nombre = request.form['nombre']
@@ -94,7 +89,6 @@ def modificar_categoria(datos_usuario, id):
     
 
 @configuracion_route.route("/agregar_medida")
-@login_requerido
 @validation_jwt
 def agregar_medida(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -103,10 +97,9 @@ def agregar_medida(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('agregar_medida.html', nombre=name, imagen=imagen_usuario, alerta=alerta)
+    return render_template('agregar_medida.html', nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
 
 @configuracion_route.route("/editar_medida/<int:id>")
-@login_requerido
 @validation_jwt
 def editar_medida(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -117,10 +110,9 @@ def editar_medida(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('editar_medida.html', medida=medidas, nombre=name, imagen=imagen_usuario, alerta=alerta)
+    return render_template('editar_medida.html', medida=medidas, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
 
 @configuracion_route.route("/modificar_medida/<int:id>", methods=['POST'])
-@login_requerido
 @validation_jwt
 def modificar_medida(id, datos_usuario):
     nombre = request.form['nombre']
@@ -139,7 +131,7 @@ def modificar_medida(id, datos_usuario):
 
 
 @configuracion_route.route("/crear_medida", methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def crear_medida(datos_usuario):
     nombre_medida = request.form['nombre']

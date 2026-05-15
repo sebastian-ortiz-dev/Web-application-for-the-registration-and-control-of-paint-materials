@@ -19,7 +19,7 @@ perfil = Usuario()
 instancia_conexion = Conexion()
 # Ruta con la vista general del negocio
 @dashboard_route.route('/principal')
-@login_requerido
+#@login_requerido
 @validation_jwt
 def dashboard(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
