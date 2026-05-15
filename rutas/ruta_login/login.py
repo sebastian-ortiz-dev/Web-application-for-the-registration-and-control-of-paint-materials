@@ -9,6 +9,7 @@ from secure.create_cookie import *
 from secure.delete_cookie import delete_cookie
 from secure.hash_password import Hash_password
 from datetime import date
+import uuid
 
 load_dotenv()
 # Rutas relacionadas al login de la aplicacion web
@@ -25,6 +26,7 @@ def login():
         clave = request.form['clave']
 
         pool_db, cursor = instancia_conexion.iniciar_conexion()
+        print(pool_db, cursor)
         texto, parametros = usuarios.login(nombre)
         recuperado = instancia_conexion.uno(cursor, texto, parametros)
 

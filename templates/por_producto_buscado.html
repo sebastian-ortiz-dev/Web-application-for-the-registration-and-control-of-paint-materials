@@ -37,7 +37,7 @@
           </svg> 
         </div>
         <div id="lista" name="lista" class="absolute w-full top-full border border-gray-300 bg-white z-50 mt-1 rounded-sm text-gray-700" style="display: none;">
-         {% if session.nivel_acceso == 'Administrador' %}
+         {% if access_level == 'Administrador' %}
             <a class="cursor-pointer block hover:bg-gray-200 pl-3 mt-0.5" href="{{ url_for('inventario.index') }}">Listar todo</a>
           {% else %}
             <a class="cursor-pointer block hover:bg-gray-200 pl-3 mt-0.5" href="{{ url_for('inventario.trabajador') }}">Listar todo</a>
