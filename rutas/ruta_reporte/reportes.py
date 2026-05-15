@@ -1,5 +1,4 @@
 from flask import Blueprint, flash, redirect, url_for
-from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from datetime import date, datetime
 from model_db.conexion import Conexion
@@ -18,7 +17,6 @@ instancia_conexion = Conexion()
 
 # Ruta con la generacion de reportes
 @reporte_route.route('/reporte')
-@login_requerido
 @validation_jwt
 def reporte_diario(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -64,7 +62,6 @@ def reporte_diario(datos_usuario):
         return redirect(url_for('dashboard.dashboard'))
 
 @reporte_route.route('/reporte_mensual')
-@login_requerido
 @validation_jwt
 def reporte_mensual(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
