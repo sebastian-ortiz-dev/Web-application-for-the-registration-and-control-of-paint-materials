@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request
-from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
 from model_db.model_class.model_producto import Producto
@@ -19,7 +18,6 @@ listado = Tipo_listado()
 instancia_conexion = Conexion()
 # ruta con la vista de los productos sin movimientos en los ultimos treinta dias
 @sin_movimiento_route.route('/sin_movimientos')
-@login_requerido
 @validation_jwt
 def no_movimientos(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -31,11 +29,10 @@ def no_movimientos(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('sin_movimientos.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('sin_movimientos.html', productos=producto, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Lista por categoria 
 @sin_movimiento_route.route('/tipo_listado/<int:categoria>')
-@login_requerido
 @validation_jwt
 def listado_filtro(datos_usuario, categoria):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -47,11 +44,10 @@ def listado_filtro(datos_usuario, categoria):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('sin_movimientos_filtro.html', productos=producto, set_categoria=categoria_todo, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('sin_movimientos_filtro.html', productos=producto, set_categoria=categoria_todo, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # lista por proveedores los productos relacionados a sus proveedores
 @sin_movimiento_route.route('/por_proveedores_no_movimientos')
-@login_requerido
 @validation_jwt
 def sin_movimiento_proveedores(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -73,11 +69,10 @@ def sin_movimiento_proveedores(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('por_proveedores.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=proveedores, nombre=name, imagen=imagen_usuario)
+    return render_template('por_proveedores.html', productos=producto, categoria=categoria, alerta=alerta, proveedores=proveedores, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta de barra de busqueda de productos sin movimientos
 @sin_movimiento_route.route('/search_bar_no_movimientos')
-@login_requerido
 @validation_jwt
 def busqueda_no_movimientos(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -90,11 +85,10 @@ def busqueda_no_movimientos(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('sin_movimientos.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('sin_movimientos.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Barra de busqueda pero con filtro aplicado
 @sin_movimiento_route.route('/filtro_no_movientos_search')
-@login_requerido
 @validation_jwt
 def movimientos_filtro_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -108,11 +102,10 @@ def movimientos_filtro_busqueda(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('sin_movimientos_filtro.html',  productos=producto, set_categoria=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
+    return render_template('sin_movimientos_filtro.html',  productos=producto, set_categoria=categoria_todo, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Barra de busqueda que lista los productos minimos segun su distribuidor
 @sin_movimiento_route.route('/por_proveedores_search_sin_movimiento')
-@login_requerido
 @validation_jwt
 def proveedores_sin_movimiento_busqueda(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -135,4 +128,4 @@ def proveedores_sin_movimiento_busqueda(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('producto_proveedor_sin_movimiento.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, proveedores=proveedores, nombre=name, imagen=imagen_usuario)
+    return render_template('producto_proveedor_sin_movimiento.html', productos=resultado_busqueda, categoria=categoria, alerta=alerta, proveedores=proveedores, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
