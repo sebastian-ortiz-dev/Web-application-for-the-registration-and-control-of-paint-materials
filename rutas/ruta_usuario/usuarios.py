@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
-from secure.secure_login import login_requerido
 from middleware.auth import validation_jwt
 from secure.process_image import *
 from secure.hash_password import Hash_password
@@ -25,7 +24,7 @@ instancia_conexion = Conexion()
 
 # Ruta con la vista principal de los usuarios
 @usuario_route.route('/usuarios')
-@login_requerido
+
 @validation_jwt
 def trabajadores_registrados(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -36,11 +35,11 @@ def trabajadores_registrados(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('usuarios.html', usuarios=usuario_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('usuarios.html', usuarios=usuario_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta con la vista con los filtros aplicados
 @usuario_route.route('/usuarios_filtro/<int:categoria>')
-@login_requerido
+
 @validation_jwt
 def trabajadores_filtro(categoria, datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -52,13 +51,13 @@ def trabajadores_filtro(categoria, datos_usuario):
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     if categoria == 1 or categoria == 2:
-        return render_template('trabajador_admin.html', usuarios=usuario_detalles, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
+        return render_template('trabajador_admin.html', usuarios=usuario_detalles, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
     else:
-        return render_template('usuarios.html', usuarios=usuario_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+        return render_template('usuarios.html', usuarios=usuario_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta con los detalles de un usuario seleccionado
 @usuario_route.route('/usuario_detalles/<int:id>')
-@login_requerido
+
 @validation_jwt
 def usuario_detalles(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -69,11 +68,11 @@ def usuario_detalles(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('detalles_usuario.html', usuario=usuario_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('detalles_usuario.html', usuario=usuario_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta que renderiza la vista con el formulario para un nuevo usuario 
 @usuario_route.route('/usuario_nuevo')
-@login_requerido
+
 @validation_jwt
 def usuario_nuevo(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -84,11 +83,11 @@ def usuario_nuevo(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('agregar_usuario.html', niveles=niveles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('agregar_usuario.html', niveles=niveles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta que trae los datos y crea el usuario en la base de datos
 @usuario_route.route('/crear_usuario', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def crear_usuario(datos_usuario):
     imagen = request.files['imagen']
@@ -138,7 +137,7 @@ def crear_usuario(datos_usuario):
     
 # Ruta que renderiza la vista para editar un usuario
 @usuario_route.route('/editar_usuario/<int:id>')
-@login_requerido
+
 @validation_jwt
 def editar_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -151,11 +150,11 @@ def editar_usuario(datos_usuario, id):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('editar_usuario.html', usuario=usuario_detalles, alerta=alerta, niveles=niveles, nombre=name, imagen=imagen_usuario)
+    return render_template('editar_usuario.html', usuario=usuario_detalles, alerta=alerta, niveles=niveles, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta que efectua los cambios del usuario en la base de datos
 @usuario_route.route('/cambios_usuario/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def cambios_usuario(datos_usuario, id):
     imagen = request.files['imagen']
@@ -208,7 +207,7 @@ def cambios_usuario(datos_usuario, id):
     
 # Ruta que renderiza la vista para eliminar el usuario
 @usuario_route.route('/eliminar_usuario/<int:id>')
-@login_requerido
+
 @validation_jwt
 def eliminar_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -223,7 +222,7 @@ def eliminar_usuario(datos_usuario, id):
 
 # Ruta que elimina el usuario en la base de datos (En realidad realiza un soft delete)
 @usuario_route.route('/delete_usuario/<int:id>', methods=['POST'])
-@login_requerido
+
 @validation_jwt
 def delete_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -241,7 +240,7 @@ def delete_usuario(datos_usuario, id):
 
 # Ruta que efectua la busqueda mediante la entrada de la barra de busqueda
 @usuario_route.route('/search_user')
-@login_requerido
+
 @validation_jwt
 def busqueda_usuario(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -253,11 +252,11 @@ def busqueda_usuario(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('usuarios.html', usuarios=usuario_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('usuarios.html', usuarios=usuario_detalles, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
 
 # Ruta que efectua la busqueda mediante la entrada de la barra de busqueda tomando en cuenta el filtro de nivel de acceso
 @usuario_route.route('/search_user_access')
-@login_requerido
+
 @validation_jwt
 def busqueda_usuario_acceso(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
@@ -270,4 +269,4 @@ def busqueda_usuario_acceso(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('trabajador_admin.html', usuarios=usuario_detalles, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario)
+    return render_template('trabajador_admin.html', usuarios=usuario_detalles, alerta=alerta, categoria=categoria, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
