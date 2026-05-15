@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, session
-from secure.secure_login import login_requerido
+from flask import Blueprint, render_template
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
 from model_db.model_class.model_producto import *
@@ -16,13 +15,12 @@ productor = Producto()
 historial = Historia_Movimientos()
 proveedor = Proveedor()
 perfil = Usuario()
+instancia_conexion = Conexion()
 # Ruta con la vista general del negocio
 @dashboard_route.route('/principal')
-@login_requerido
 @validation_jwt
 def dashboard(datos_usuario):
-    instancia_conexion = Conexion()
-    cursor = instancia_conexion.iniciar_conexion()
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto = instancia_conexion.todos(cursor, productor.obtener_cantidad_productos())
@@ -60,8 +58,8 @@ def dashboard(datos_usuario):
     if len(no_movimientos) != 0:
         query, parametros = productor.modificar_cantidad_sin_movimientos(tuple(no_movimientos))
         instancia_conexion.registrar(cursor, query, parametros)
-        instancia_conexion.ejecutar_cambio()
-    instancia_conexion.cerrar_conexion(cursor)
+        instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('principal.html', productos=producto, movimiento=num_total_inactivo, no_movimiento=productos_movimientos,  ids=no_movimientos, devoluciones=total_devoluciones, entradas=total_entradas, salidas=total_salidas, devoluciones_bs=total_devoluciones_bs, entradas_bs=total_entradas_bs, salidas_bs=total_salidas_bs, ajuste=total_ajustes, ajuste_aumento=total_ajuste_aumento, ajuste_disminucion=total_ajuste_disminucion, alerta=alerta, nombre=name, imagen=imagen_usuario)
+    return render_template('principal.html', productos=producto, movimiento=num_total_inactivo, no_movimiento=productos_movimientos,  ids=no_movimientos, devoluciones=total_devoluciones, entradas=total_entradas, salidas=total_salidas, devoluciones_bs=total_devoluciones_bs, entradas_bs=total_entradas_bs, salidas_bs=total_salidas_bs, ajuste=total_ajustes, ajuste_aumento=total_ajuste_aumento, ajuste_disminucion=total_ajuste_disminucion, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])

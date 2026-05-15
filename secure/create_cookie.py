@@ -1,5 +1,4 @@
 from flask import redirect, url_for
-import uuid
 
 def create_cookie(encode, uuid_get):
     cookie = redirect(url_for('dashboard.dashboard'))

@@ -52,7 +52,7 @@
     {% endwith %} 
 
     <div class="flex mt-5 justify-between">
-      {% if session.nivel_acceso == 'Administrador' %}
+      {% if access_level == 'Administrador' %}
         <a href="{{ url_for('inventario.index') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-blue-300 ">
             <div class="flex">
               <p class="text-blue-400">Productos</p>
@@ -76,7 +76,7 @@
         </div></a>
       {% endif %}
 
-      {% if session.nivel_acceso == 'Administrador' %}
+      {% if access_level == 'Administrador' %}
         <a href="{{ url_for('inactivos.inactivos') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-green-300">
             <div class="flex">
               <p class="text-green-400">Inactivos</p>
