@@ -36,6 +36,8 @@ Rename the .env.example file to .env.
 
 Load your own credentials (DB_USER, DB_PASSWORD, etc.).
 
+For start the user name is admin and the password is 123.
+
 The system is now ready to run with Docker Compose.
 
 A Note on Communication & Growth
