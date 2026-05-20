@@ -15,7 +15,7 @@ from rutas.ruta_sin_movimiento.sin_movimiento import sin_movimiento_route
 from rutas.ruta_inactivos.inactivos import inactivos_route
 from rutas.ruta_configuraciones.configuraciones import configuracion_route
 from rutas.ruta_reporte.reportes import reporte_route
-from rutas.ruta_error_handler.error_handlre import handler_error_route
+from rutas.ruta_error_handler.error_handler import handler_error_route
 
 # main controllator
 app=Flask(__name__)
