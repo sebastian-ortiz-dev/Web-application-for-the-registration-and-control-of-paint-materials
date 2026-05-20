@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from middleware.auth import *
+from middleware.acces_level import validation_acces
 from model_db.conexion import Conexion
 from model_db.model_class.model_producto import Producto
 from model_db.model_class.model_categoria import Categoria
@@ -58,6 +59,7 @@ def crear_categoria(datos_usuario):
     
 @configuracion_route.route("/editar_categoria/<int:id>")
 @validation_jwt
+@validation_acces
 def editar_categoria(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -71,6 +73,7 @@ def editar_categoria(datos_usuario, id):
 
 @configuracion_route.route("/modificar_categoria/<int:id>", methods=['POST'])
 @validation_jwt
+@validation_acces
 def modificar_categoria(datos_usuario, id):
     nombre = request.form['nombre']
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -100,6 +103,7 @@ def agregar_medida(datos_usuario):
 
 @configuracion_route.route("/editar_medida/<int:id>")
 @validation_jwt
+@validation_acces
 def editar_medida(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -113,6 +117,7 @@ def editar_medida(datos_usuario, id):
 
 @configuracion_route.route("/modificar_medida/<int:id>", methods=['POST'])
 @validation_jwt
+@validation_acces
 def modificar_medida(id, datos_usuario):
     nombre = request.form['nombre']
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -130,7 +135,6 @@ def modificar_medida(id, datos_usuario):
 
 
 @configuracion_route.route("/crear_medida", methods=['POST'])
-
 @validation_jwt
 def crear_medida(datos_usuario):
     nombre_medida = request.form['nombre']

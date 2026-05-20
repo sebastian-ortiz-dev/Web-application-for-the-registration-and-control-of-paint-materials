@@ -27,7 +27,6 @@ instancia_conexion = Conexion()
 
 # Ruta que lista la vista principal de los movimientos
 @movimiento_route.route('/movimiento')
-
 @validation_jwt
 def movimiento(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -50,7 +49,6 @@ def movimiento(datos_usuario):
 
 # Ruta que registra una entrada en la DB de un producto existente
 @movimiento_route.route('/registrar_entrada_existente', methods=["POST"])
-
 @validation_jwt
 def registrar_entrada(datos_usuario):
     tipo_movimiento = 1
@@ -79,7 +77,6 @@ def registrar_entrada(datos_usuario):
 
 # Ruta que registra una entrada en la DB de un producto que no existe     
 @movimiento_route.route('/registrar_entrada_no_existente', methods=["POST"])
-
 @validation_jwt
 def registrar_entrada_no_existente(datos_usuario):
     # SEPARAR LOS DOS FORMULARIOS, IDEA: PARA LOS PRODUCTOS QUE NO EXISTEN AUN, DEBERIA PRIMERO CREARLOS Y DESPUES LISTARLOS HACER UN IF QUE VEA SI ESE PRODUCTO EXISTE EN ESA LISTA Y CREAR LA ENTRADA
@@ -133,7 +130,6 @@ def registrar_entrada_no_existente(datos_usuario):
 
 # Ruta que registra una salida en la DB
 @movimiento_route.route('/registrar_salida', methods=["POST"])
-
 @validation_jwt
 def registrar_salida(datos_usuario):
     producto = request.form['producto']
@@ -167,7 +163,6 @@ def registrar_salida(datos_usuario):
 
 # Ruta que registra una devolucion en la DB  
 @movimiento_route.route("/registrar_devolucion", methods=["POST"])
-
 @validation_jwt
 def registrar_devolucion(datos_usuario):
     producto = request.form['producto']
@@ -208,7 +203,6 @@ def registrar_devolucion(datos_usuario):
 
 # Ruta que registra un ajuste en la DB
 @movimiento_route.route("/registrar_Ajuste", methods=["POST"])
-
 @validation_jwt
 def registrar_Ajuste(datos_usuario):
     producto = request.form['producto']

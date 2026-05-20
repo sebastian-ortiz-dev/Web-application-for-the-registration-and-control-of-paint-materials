@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from middleware.auth import validation_jwt
+from middleware.acces_level import validation_acces
 from secure.process_image import *
 from secure.hash_password import Hash_password
 from werkzeug.utils import secure_filename
@@ -24,8 +25,8 @@ instancia_conexion = Conexion()
 
 # Ruta con la vista principal de los usuarios
 @usuario_route.route('/usuarios')
-
 @validation_jwt
+@validation_acces
 def trabajadores_registrados(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -39,8 +40,8 @@ def trabajadores_registrados(datos_usuario):
 
 # Ruta con la vista con los filtros aplicados
 @usuario_route.route('/usuarios_filtro/<int:categoria>')
-
 @validation_jwt
+@validation_acces
 def trabajadores_filtro(categoria, datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -57,8 +58,8 @@ def trabajadores_filtro(categoria, datos_usuario):
 
 # Ruta con los detalles de un usuario seleccionado
 @usuario_route.route('/usuario_detalles/<int:id>')
-
 @validation_jwt
+@validation_acces
 def usuario_detalles(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -72,8 +73,8 @@ def usuario_detalles(datos_usuario, id):
 
 # Ruta que renderiza la vista con el formulario para un nuevo usuario 
 @usuario_route.route('/usuario_nuevo')
-
 @validation_jwt
+@validation_acces
 def usuario_nuevo(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -87,8 +88,8 @@ def usuario_nuevo(datos_usuario):
 
 # Ruta que trae los datos y crea el usuario en la base de datos
 @usuario_route.route('/crear_usuario', methods=['POST'])
-
 @validation_jwt
+@validation_acces
 def crear_usuario(datos_usuario):
     imagen = request.files['imagen']
     nombre = request.form['nombre']
@@ -142,8 +143,8 @@ def crear_usuario(datos_usuario):
     
 # Ruta que renderiza la vista para editar un usuario
 @usuario_route.route('/editar_usuario/<int:id>')
-
 @validation_jwt
+@validation_acces
 def editar_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -159,8 +160,8 @@ def editar_usuario(datos_usuario, id):
 
 # Ruta que efectua los cambios del usuario en la base de datos
 @usuario_route.route('/cambios_usuario/<int:id>', methods=['POST'])
-
 @validation_jwt
+@validation_acces
 def cambios_usuario(datos_usuario, id):
     imagen = request.files['imagen']
     nombre = request.form['nombre']
@@ -212,8 +213,8 @@ def cambios_usuario(datos_usuario, id):
     
 # Ruta que renderiza la vista para eliminar el usuario
 @usuario_route.route('/eliminar_usuario/<int:id>')
-
 @validation_jwt
+@validation_acces
 def eliminar_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -227,8 +228,8 @@ def eliminar_usuario(datos_usuario, id):
 
 # Ruta que elimina el usuario en la base de datos (En realidad realiza un soft delete)
 @usuario_route.route('/delete_usuario/<int:id>', methods=['POST'])
-
 @validation_jwt
+@validation_acces
 def delete_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     usuarios, parametro = usuario.eliminar_usuario(id)
@@ -245,8 +246,8 @@ def delete_usuario(datos_usuario, id):
 
 # Ruta que efectua la busqueda mediante la entrada de la barra de busqueda
 @usuario_route.route('/search_user')
-
 @validation_jwt
+@validation_acces
 def busqueda_usuario(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -261,8 +262,8 @@ def busqueda_usuario(datos_usuario):
 
 # Ruta que efectua la busqueda mediante la entrada de la barra de busqueda tomando en cuenta el filtro de nivel de acceso
 @usuario_route.route('/search_user_access')
-
 @validation_jwt
+@validation_acces
 def busqueda_usuario_acceso(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     categoria = request.args['acceso']

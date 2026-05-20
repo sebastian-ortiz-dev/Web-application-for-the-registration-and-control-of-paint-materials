@@ -1,4 +1,4 @@
-from flask import request, abort
+from flask import request, abort, redirect, url_for
 from middleware.auth import data_jwt
 
 def validation_acces(func):
