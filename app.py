@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, jsonify, render_template
+from middleware.auth import *
 import os
 from dotenv import load_dotenv
 # import all the routes
@@ -14,6 +15,7 @@ from rutas.ruta_sin_movimiento.sin_movimiento import sin_movimiento_route
 from rutas.ruta_inactivos.inactivos import inactivos_route
 from rutas.ruta_configuraciones.configuraciones import configuracion_route
 from rutas.ruta_reporte.reportes import reporte_route
+from rutas.ruta_error_handler.error_handlre import handler_error_route
 
 # main controllator
 app=Flask(__name__)
@@ -23,6 +25,9 @@ clave = app.secret_key = os.getenv('SECRET_KEY')
 
 # route login
 app.register_blueprint(login_route)
+
+# route error handler
+app.register_blueprint(handler_error_route)
 
 # route dahsboard principal
 app.register_blueprint(dashboard_route)
@@ -56,6 +61,16 @@ app.register_blueprint(configuracion_route)
 
 # route con el reporte
 app.register_blueprint(reporte_route)
+
+@app.errorhandler(404)
+@validation_jwt
+def resource_not_found(datos_usuario, e):
+    return render_template('error_universal.html', status_code=404, error_title="Resource not found", error_message="Verify the URL"), 404
+
+@app.errorhandler(405)
+@validation_jwt
+def resource_not_found(datos_usuario, e):
+    return render_template('error_universal.html', status_code=405, error_title="Method not allowed", error_message="The method http isn't allow in this endpoint"), 405
 
 if __name__ == "__main__":
     app.run(debug=True)

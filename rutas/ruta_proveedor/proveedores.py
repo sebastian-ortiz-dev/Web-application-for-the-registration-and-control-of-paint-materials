@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from middleware.auth import validation_jwt
 from model_db.conexion import Conexion
 from model_db.model_class.model_proveedor import Proveedor
@@ -89,6 +89,8 @@ def editar_proveedor(datos_usuario, id):
     consulta, parametro = proveedor.obtener_uno(id)
     proveedores = instancia_conexion.uno(cursor, consulta, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
+    if not proveedores:
+        abort(404)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('editar_proveedor.html', proveedor_obtenido=proveedores, alerta=alerta, nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'])
