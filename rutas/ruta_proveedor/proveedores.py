@@ -1,19 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from middleware.auth import validation_jwt
 from middleware.acces_level import validation_acces
-from model_db.conexion import Conexion
-from model_db.model_class.model_proveedor import Proveedor
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_listado import Tipo_listado
+from model_db.class_singlen import productor, proveedor, listado, instancia_conexion
 from datetime import date
 
 # Rutas relacionadas a los proveedores de la aplicacion web
 proveedor_route = Blueprint('proveedor', __name__, template_folder='templates')
 
-productor = Producto() 
-proveedor = Proveedor()
-listado = Tipo_listado()
-instancia_conexion = Conexion()
 # Ruta con la vista principal con los proveedores
 @proveedor_route.route('/proveedores')
 @validation_jwt

@@ -5,24 +5,10 @@ from werkzeug.utils import secure_filename
 from datetime import date, datetime
 import os
 from secure.file_secure import allowed_file
-from model_db.conexion import Conexion
-from model_db.model_class.model_movimientos import Movimientos
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_proveedor import Proveedor
-from model_db.model_class.model_historial import Historia_Movimientos
-from model_db.model_class.model_categoria import Categoria
-from model_db.model_class.model_medida import Medida
+from model_db.class_singlen import productor, proveedor, category, medida, movimientos, historial, instancia_conexion
 
 # Rutas relacionadas a los movimientos de la aplicacion web
 movimiento_route = Blueprint('movimiento', __name__, template_folder='templates')
-
-productor = Producto() 
-proveedor = Proveedor()
-categorias = Categoria()
-medida = Medida()
-movimientos = Movimientos()
-historial = Historia_Movimientos()
-instancia_conexion = Conexion()
 
 # Ruta que lista la vista principal de los movimientos
 @movimiento_route.route('/movimiento')
@@ -37,7 +23,7 @@ def movimiento(datos_usuario):
     producto = instancia_conexion.todos(cursor, productos)
     varios = proveedor.listar_varios()
     proveedores = instancia_conexion.todos(cursor, varios)
-    categoria_lista = categorias.listar()
+    categoria_lista = category.listar()
     categoria = instancia_conexion.todos(cursor, categoria_lista)
     medidas_consulta = medida.listar()
     medidas = instancia_conexion.todos(cursor, medidas_consulta)

@@ -6,15 +6,10 @@ from model_db.model_class.model_producto import Producto
 from model_db.model_class.model_listado import Tipo_listado
 from model_db.model_class.model_proveedor import Proveedor
 from model_db.model_class.model_usuario import Usuario
+from model_db.class_singlen import productor, proveedor, listado, usuarios, instancia_conexion
 
 # Rutas relacionadas a los productos, proveedores y perfiles inactivos
 inactivos_route = Blueprint('inactivos', __name__, template_folder='templates')
-
-productor = Producto() 
-proveedor = Proveedor()
-listado = Tipo_listado()
-perfil = Usuario()
-instancia_conexion = Conexion()
 
 @inactivos_route.route("/inactivos")
 @validation_jwt
@@ -146,7 +141,7 @@ def inactivo_perfil(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    texto = perfil.listar_inactivo_perfil()
+    texto = usuarios.listar_inactivo_perfil()
     perfiles = instancia_conexion.todos(cursor, texto)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
@@ -160,7 +155,7 @@ def reintegrar_perfil(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = perfil.obtener_uno(id)
+    usuarios, parametro = usuarios.obtener_uno(id)
     perfiles = instancia_conexion.uno(cursor, usuarios, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
@@ -173,7 +168,7 @@ def reintegrar_perfil(datos_usuario, id):
 @validation_acces
 def recuperar_perfil(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    usuarios, parametro = perfil.recuperar_usuario(id)
+    usuarios, parametro = usuarios.recuperar_usuario(id)
     instancia_conexion.registrar(cursor, usuarios, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
@@ -194,7 +189,7 @@ def busqueda_perfil_inactivo(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = perfil.busqueda_usuario_inactivo(filtro)
+    usuarios, parametro = usuarios.busqueda_usuario_inactivo(filtro)
     perfiles = instancia_conexion.todos_parametros(cursor, usuarios, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  

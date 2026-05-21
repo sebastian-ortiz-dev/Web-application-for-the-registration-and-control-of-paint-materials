@@ -1,10 +1,5 @@
 from flask import Blueprint, render_template
 from middleware.auth import validation_jwt
-from model_db.conexion import Conexion
-from model_db.model_class.model_producto import *
-from model_db.model_class.model_historial import Historia_Movimientos
-from model_db.model_class.model_usuario import Usuario
-from model_db.model_class.model_proveedor import Proveedor
 from model_db.class_singlen import productor, historial, proveedor, usuarios, instancia_conexion
 from secure.sin_movimientos import dia
 from secure.sin_movimientos import sin_movimiento

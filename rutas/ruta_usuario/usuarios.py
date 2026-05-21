@@ -12,16 +12,10 @@ from model_db.model_class.model_usuario import Usuario
 from model_db.model_class.model_acceso import Acceso
 from model_db.model_class.model_producto import Producto
 from model_db.model_class.model_listado import Tipo_listado
+from model_db.class_singlen import productor, acceso, usuarios, listado, hash, instancia_conexion
 
 # Rutas relacionadas a los usuarios de la aplicacion web
 usuario_route = Blueprint('usuario', __name__, template_folder='templates')
-
-productor = Producto() 
-acceso = Acceso()
-usuario = Usuario()
-listado = Tipo_listado()
-hash = Hash_password()
-instancia_conexion = Conexion()
 
 # Ruta con la vista principal de los usuarios
 @usuario_route.route('/usuarios')
@@ -31,8 +25,8 @@ def trabajadores_registrados(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios = usuario.listar()
-    usuario_detalles = instancia_conexion.todos(cursor, usuarios)
+    usuario = usuarios.listar()
+    usuario_detalles = instancia_conexion.todos(cursor, usuario)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -42,7 +36,7 @@ def trabajadores_registrados(datos_usuario):
 @usuario_route.route('/usuarios_filtro/<int:categoria>')
 @validation_jwt
 @validation_acces
-def trabajadores_filtro(categoria, datos_usuario):
+def trabajadores_filtro(datos_usuario,categoria):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
@@ -64,8 +58,8 @@ def usuario_detalles(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuario.obtener_uno(id)
-    usuario_detalles = instancia_conexion.uno(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.obtener_uno(id)
+    usuario_detalles = instancia_conexion.uno(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -125,9 +119,9 @@ def crear_usuario(datos_usuario):
 
     contraseña = hash.create_hash(contraseña)
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    usuarios, parametro = usuario.create_usuario(nombre, contraseña, acceso, archivo, date.today())
+    usuario, parametro = usuarios.create_usuario(nombre, contraseña, acceso, archivo, date.today())
     try:
-        instancia_conexion.registrar(cursor, usuarios, parametro)
+        instancia_conexion.registrar(cursor, usuario, parametro)
     except Exception as e:
         print(f"Error: {e}")
         flash("Error: El nombre de usuario ya existe")
@@ -151,8 +145,8 @@ def editar_usuario(datos_usuario, id):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     accesos = acceso.listar()
     niveles = instancia_conexion.todos(cursor, accesos)
-    usuarios, parametro = usuario.obtener_uno(id)
-    usuario_detalles = instancia_conexion.uno(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.obtener_uno(id)
+    usuario_detalles = instancia_conexion.uno(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -194,9 +188,9 @@ def cambios_usuario(datos_usuario, id):
     contraseña = hash.create_hash(contraseña)
     
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    usuarios, parametro = usuario.modificar_usuario(nombre, contraseña, acceso, archivo, id)
+    usuario, parametro = usuarios.modificar_usuario(nombre, contraseña, acceso, archivo, id)
     try:
-        instancia_conexion.registrar(cursor, usuarios, parametro)
+        instancia_conexion.registrar(cursor, usuario, parametro)
     except Exception as e:
         print(f"Error: {e}")
         flash("Error: El nombre de usuario ya existe")
@@ -219,8 +213,8 @@ def eliminar_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuario.obtener_uno(id)
-    usuario_detalles = instancia_conexion.uno(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.obtener_uno(id)
+    usuario_detalles = instancia_conexion.uno(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -232,8 +226,8 @@ def eliminar_usuario(datos_usuario, id):
 @validation_acces
 def delete_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    usuarios, parametro = usuario.eliminar_usuario(id)
-    instancia_conexion.registrar(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.eliminar_usuario(id)
+    instancia_conexion.registrar(cursor, usuario, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
 
@@ -253,8 +247,8 @@ def busqueda_usuario(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuario.busqueda_usuario(filtro)
-    usuario_detalles = instancia_conexion.todos_parametros(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.busqueda_usuario(filtro)
+    usuario_detalles = instancia_conexion.todos_parametros(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -270,8 +264,8 @@ def busqueda_usuario_acceso(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuario.busqueda_usuario_acceso(filtro, categoria)
-    usuario_detalles = instancia_conexion.todos_parametros(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.busqueda_usuario_acceso(filtro, categoria)
+    usuario_detalles = instancia_conexion.todos_parametros(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
