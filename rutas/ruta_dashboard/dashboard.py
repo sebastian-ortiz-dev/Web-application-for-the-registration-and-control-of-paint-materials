@@ -1,21 +1,13 @@
 from flask import Blueprint, render_template
 from middleware.auth import validation_jwt
-from model_db.conexion import Conexion
-from model_db.model_class.model_producto import *
-from model_db.model_class.model_historial import Historia_Movimientos
-from model_db.model_class.model_usuario import Usuario
-from model_db.model_class.model_proveedor import Proveedor
+from model_db.class_singlen import productor, historial, proveedor, usuarios, instancia_conexion
 from secure.sin_movimientos import dia
 from secure.sin_movimientos import sin_movimiento
+
 
 # Rutas relacionadas a la vista general de la aplicacion web
 dashboard_route = Blueprint('dashboard', __name__, template_folder='templates')
 
-productor = Producto()
-historial = Historia_Movimientos()
-proveedor = Proveedor()
-perfil = Usuario()
-instancia_conexion = Conexion()
 # Ruta con la vista general del negocio
 @dashboard_route.route('/principal')
 @validation_jwt
@@ -45,7 +37,7 @@ def dashboard(datos_usuario):
     total_ajuste_disminucion = instancia_conexion.todos_parametros(cursor, ajuste_disminucion, parametro)
     texto = productor.contar_productos_inactivo()
     texto2 = proveedor.contar_inactivo()
-    texto3 = perfil.contar_perfil_inactivo()
+    texto3 = usuarios.contar_perfil_inactivo()
     num_producto = instancia_conexion.todos(cursor, texto)
     num_proveedor = instancia_conexion.todos(cursor, texto2)
     num_perfil = instancia_conexion.todos(cursor, texto3)

@@ -8,6 +8,7 @@ reporte.html
 dockerfile_2
 test.py
 ./backup_reportes/*
+./reportes/*
 
 __pycache__/
 .pyc

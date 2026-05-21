@@ -1,17 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from middleware.auth import *
-from model_db.conexion import Conexion
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_categoria import Categoria
-from model_db.model_class.model_medida import Medida
+from middleware.acces_level import validation_acces
+from model_db.class_singlen import productor, medida, category, instancia_conexion
 
 # Rutas relacionadas a las configuraciones
 configuracion_route = Blueprint('configuracion', __name__, template_folder='templates')
-
-productor = Producto()
-medida = Medida()
-categoria = Categoria()
-instancia_conexion = Conexion()
 
 @configuracion_route.route("/configuracion")
 @validation_jwt
@@ -21,7 +14,7 @@ def configuracion(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto = medida.listar()
     medidas = instancia_conexion.todos(cursor, texto)
-    texto2 = categoria.listar()
+    texto2 = category.listar()
     categorias = instancia_conexion.todos(cursor, texto2)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
@@ -44,7 +37,7 @@ def agregar_categoria(datos_usuario):
 def crear_categoria(datos_usuario):
     nombre_categoria = request.form['nombre']
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    texto, parametro = categoria.crear(nombre_categoria)
+    texto, parametro = category.crear(nombre_categoria)
     instancia_conexion.registrar(cursor, texto, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
@@ -58,11 +51,12 @@ def crear_categoria(datos_usuario):
     
 @configuracion_route.route("/editar_categoria/<int:id>")
 @validation_jwt
+@validation_acces
 def editar_categoria(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    texto, parametro = categoria.obtener_uno(id)
+    texto, parametro = category.obtener_uno(id)
     categorias = instancia_conexion.uno(cursor, texto, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
@@ -71,10 +65,11 @@ def editar_categoria(datos_usuario, id):
 
 @configuracion_route.route("/modificar_categoria/<int:id>", methods=['POST'])
 @validation_jwt
+@validation_acces
 def modificar_categoria(datos_usuario, id):
     nombre = request.form['nombre']
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    texto, parametro = categoria.modificar(nombre, id)
+    texto, parametro = category.modificar(nombre, id)
     instancia_conexion.registrar(cursor, texto, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
@@ -100,6 +95,7 @@ def agregar_medida(datos_usuario):
 
 @configuracion_route.route("/editar_medida/<int:id>")
 @validation_jwt
+@validation_acces
 def editar_medida(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -113,6 +109,7 @@ def editar_medida(datos_usuario, id):
 
 @configuracion_route.route("/modificar_medida/<int:id>", methods=['POST'])
 @validation_jwt
+@validation_acces
 def modificar_medida(id, datos_usuario):
     nombre = request.form['nombre']
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -130,7 +127,6 @@ def modificar_medida(id, datos_usuario):
 
 
 @configuracion_route.route("/crear_medida", methods=['POST'])
-
 @validation_jwt
 def crear_medida(datos_usuario):
     nombre_medida = request.form['nombre']
