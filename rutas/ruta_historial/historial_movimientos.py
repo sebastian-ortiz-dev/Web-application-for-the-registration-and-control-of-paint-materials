@@ -1,17 +1,10 @@
 from flask import Blueprint, render_template, request
 from middleware.auth import validation_jwt
-from model_db.conexion import Conexion
-from model_db.model_class.model_historial import Historia_Movimientos
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_listado import Tipo_listado
+from model_db.class_singlen import productor, listado, historial, instancia_conexion
 
 # Rutas relacionadas al historial de movimientos de la aplicacion web
 historial_route = Blueprint('historial', __name__, template_folder='templates')
 
-productor = Producto() 
-listado = Tipo_listado()
-historial = Historia_Movimientos()
-instancia_conexion = Conexion()
 # Ruta que lista todos los movimientos que se hacen
 @historial_route.route('/historia')
 

@@ -1,19 +1,11 @@
 from flask import Blueprint, flash, redirect, url_for
 from middleware.auth import validation_jwt
 from datetime import date, datetime
-from model_db.conexion import Conexion
-from model_db.model_class.model_producto import *
-from model_db.model_class.model_historial import Historia_Movimientos
-from model_db.model_class.model_usuario import Usuario
+from model_db.class_singlen import productor, historial, usuarios, instancia_conexion
 from jinja2 import Environment, FileSystemLoader
 from secure.generar_reporte import *
 # Rutas relacionadas con los reportes
 reporte_route = Blueprint('reporte', __name__, template_folder='templates')
-
-productor = Producto()
-historial = Historia_Movimientos()
-perfil = Usuario()
-instancia_conexion = Conexion()
 
 # Ruta con la generacion de reportes
 @reporte_route.route('/reporte')
@@ -46,7 +38,7 @@ def reporte_diario(datos_usuario):
     fecha = date.today()
     hora = datetime.now()
     hora_exacta = hora.strftime("%H:%M:%S")
-    texto, parametro = perfil.obtener_nombre(datos_usuario['sub'])
+    texto, parametro = usuarios.obtener_nombre(datos_usuario['sub'])
     perfiles = instancia_conexion.uno(cursor, texto, parametro)
     print(perfiles)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
@@ -97,7 +89,7 @@ def reporte_mensual(datos_usuario):
     total = f"{total_salidas_bs[0][0] / valor_promedio:.2f}"
     indice_rotacion = total
     hora_exacta = hora.strftime("%H:%M:%S")
-    texto, parametro = perfil.obtener_nombre(datos_usuario['sub'])
+    texto, parametro = usuarios.obtener_nombre(datos_usuario['sub'])
     perfiles = instancia_conexion.uno(cursor, texto, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     env = Environment(loader=FileSystemLoader("templates"))

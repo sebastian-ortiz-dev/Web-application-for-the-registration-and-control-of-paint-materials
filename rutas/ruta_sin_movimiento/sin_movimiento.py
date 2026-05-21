@@ -1,21 +1,12 @@
 from flask import Blueprint, render_template, request
 from middleware.auth import validation_jwt
-from model_db.conexion import Conexion
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_listado import Tipo_listado
-from model_db.model_class.model_proveedor import Proveedor
-from model_db.model_class.model_categoria import Categoria
+from model_db.class_singlen import productor, proveedor, category, listado, instancia_conexion
 from secure.obtener_proveedores import get_producto_id
 from secure.sin_movimientos import limpiar
 
 # Rutas relacionadas a los productos sin movimientos de la aplicacion web
 sin_movimiento_route = Blueprint('sin_movimiento', __name__, template_folder='templates')
 
-productor = Producto() 
-proveedor = Proveedor()
-categorias = Categoria()
-listado = Tipo_listado()
-instancia_conexion = Conexion()
 # ruta con la vista de los productos sin movimientos en los ultimos treinta dias
 @sin_movimiento_route.route('/sin_movimientos')
 @validation_jwt
@@ -25,7 +16,7 @@ def no_movimientos(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     productos = productor.listar_sin_movimiento()
     producto = instancia_conexion.todos(cursor, productos)
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -40,7 +31,7 @@ def listado_filtro(datos_usuario, categoria):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     tipo, parametro = listado.listar_no_movimientos(categoria)
     producto = instancia_conexion.todos_parametros(cursor, tipo, parametro)
-    categoria_todo = instancia_conexion.todos(cursor, categorias.listar())
+    categoria_todo = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -55,7 +46,7 @@ def sin_movimiento_proveedores(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     productos = productor.listar_sin_movimiento()
     producto = instancia_conexion.todos(cursor, productos)
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     if len(producto) != 0:
         id_productos = get_producto_id(producto)
         proveedores, parametro = productor.obtener_proveedores(tuple(id_productos))
@@ -81,7 +72,7 @@ def busqueda_no_movimientos(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto, parametro = productor.busqueda_productos_sin_movimiento(filtro)
     resultado_busqueda = instancia_conexion.todos_parametros(cursor, producto, parametro)
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -98,7 +89,7 @@ def movimientos_filtro_busqueda(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)  
     productos, parametro = productor.busqueda_productos_categoria_sin_movimientos(filtro, categoria)
     producto = instancia_conexion.todos_parametros(cursor, productos, parametro)
-    categoria_todo = instancia_conexion.todos(cursor, categorias.listar())
+    categoria_todo = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -114,7 +105,7 @@ def proveedores_sin_movimiento_busqueda(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto, parametro = productor.busqueda_productos_sin_movimiento(filtro)
     resultado_busqueda = instancia_conexion.todos_parametros(cursor, producto, parametro)
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     if len(resultado_busqueda) != 0:
         id_productos = get_producto_id(resultado_busqueda)
         proveedores, parametro = productor.obtener_proveedores(tuple(id_productos))

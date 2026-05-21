@@ -1,37 +1,26 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from middleware.auth import validation_jwt
+from middleware.acces_level import validation_acces
 from secure.process_image import *
-from secure.hash_password import Hash_password
 from werkzeug.utils import secure_filename
 from datetime import date
 import os
 from secure.file_secure import allowed_file
-from model_db.conexion import Conexion
-from model_db.model_class.model_usuario import Usuario
-from model_db.model_class.model_acceso import Acceso
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_listado import Tipo_listado
+from model_db.class_singlen import productor, acceso, usuarios, listado, hash, instancia_conexion
 
 # Rutas relacionadas a los usuarios de la aplicacion web
 usuario_route = Blueprint('usuario', __name__, template_folder='templates')
 
-productor = Producto() 
-acceso = Acceso()
-usuario = Usuario()
-listado = Tipo_listado()
-hash = Hash_password()
-instancia_conexion = Conexion()
-
 # Ruta con la vista principal de los usuarios
 @usuario_route.route('/usuarios')
-
 @validation_jwt
+@validation_acces
 def trabajadores_registrados(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios = usuario.listar()
-    usuario_detalles = instancia_conexion.todos(cursor, usuarios)
+    usuario = usuarios.listar()
+    usuario_detalles = instancia_conexion.todos(cursor, usuario)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -39,9 +28,9 @@ def trabajadores_registrados(datos_usuario):
 
 # Ruta con la vista con los filtros aplicados
 @usuario_route.route('/usuarios_filtro/<int:categoria>')
-
 @validation_jwt
-def trabajadores_filtro(categoria, datos_usuario):
+@validation_acces
+def trabajadores_filtro(datos_usuario,categoria):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
@@ -57,14 +46,14 @@ def trabajadores_filtro(categoria, datos_usuario):
 
 # Ruta con los detalles de un usuario seleccionado
 @usuario_route.route('/usuario_detalles/<int:id>')
-
 @validation_jwt
+@validation_acces
 def usuario_detalles(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuario.obtener_uno(id)
-    usuario_detalles = instancia_conexion.uno(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.obtener_uno(id)
+    usuario_detalles = instancia_conexion.uno(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -72,8 +61,8 @@ def usuario_detalles(datos_usuario, id):
 
 # Ruta que renderiza la vista con el formulario para un nuevo usuario 
 @usuario_route.route('/usuario_nuevo')
-
 @validation_jwt
+@validation_acces
 def usuario_nuevo(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -87,8 +76,8 @@ def usuario_nuevo(datos_usuario):
 
 # Ruta que trae los datos y crea el usuario en la base de datos
 @usuario_route.route('/crear_usuario', methods=['POST'])
-
 @validation_jwt
+@validation_acces
 def crear_usuario(datos_usuario):
     imagen = request.files['imagen']
     nombre = request.form['nombre']
@@ -124,9 +113,9 @@ def crear_usuario(datos_usuario):
 
     contraseña = hash.create_hash(contraseña)
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    usuarios, parametro = usuario.create_usuario(nombre, contraseña, acceso, archivo, date.today())
+    usuario, parametro = usuarios.create_usuario(nombre, contraseña, acceso, archivo, date.today())
     try:
-        instancia_conexion.registrar(cursor, usuarios, parametro)
+        instancia_conexion.registrar(cursor, usuario, parametro)
     except Exception as e:
         print(f"Error: {e}")
         flash("Error: El nombre de usuario ya existe")
@@ -142,16 +131,16 @@ def crear_usuario(datos_usuario):
     
 # Ruta que renderiza la vista para editar un usuario
 @usuario_route.route('/editar_usuario/<int:id>')
-
 @validation_jwt
+@validation_acces
 def editar_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     accesos = acceso.listar()
     niveles = instancia_conexion.todos(cursor, accesos)
-    usuarios, parametro = usuario.obtener_uno(id)
-    usuario_detalles = instancia_conexion.uno(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.obtener_uno(id)
+    usuario_detalles = instancia_conexion.uno(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -159,8 +148,8 @@ def editar_usuario(datos_usuario, id):
 
 # Ruta que efectua los cambios del usuario en la base de datos
 @usuario_route.route('/cambios_usuario/<int:id>', methods=['POST'])
-
 @validation_jwt
+@validation_acces
 def cambios_usuario(datos_usuario, id):
     imagen = request.files['imagen']
     nombre = request.form['nombre']
@@ -193,9 +182,9 @@ def cambios_usuario(datos_usuario, id):
     contraseña = hash.create_hash(contraseña)
     
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    usuarios, parametro = usuario.modificar_usuario(nombre, contraseña, acceso, archivo, id)
+    usuario, parametro = usuarios.modificar_usuario(nombre, contraseña, acceso, archivo, id)
     try:
-        instancia_conexion.registrar(cursor, usuarios, parametro)
+        instancia_conexion.registrar(cursor, usuario, parametro)
     except Exception as e:
         print(f"Error: {e}")
         flash("Error: El nombre de usuario ya existe")
@@ -212,14 +201,14 @@ def cambios_usuario(datos_usuario, id):
     
 # Ruta que renderiza la vista para eliminar el usuario
 @usuario_route.route('/eliminar_usuario/<int:id>')
-
 @validation_jwt
+@validation_acces
 def eliminar_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuario.obtener_uno(id)
-    usuario_detalles = instancia_conexion.uno(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.obtener_uno(id)
+    usuario_detalles = instancia_conexion.uno(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -227,12 +216,12 @@ def eliminar_usuario(datos_usuario, id):
 
 # Ruta que elimina el usuario en la base de datos (En realidad realiza un soft delete)
 @usuario_route.route('/delete_usuario/<int:id>', methods=['POST'])
-
 @validation_jwt
+@validation_acces
 def delete_usuario(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    usuarios, parametro = usuario.eliminar_usuario(id)
-    instancia_conexion.registrar(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.eliminar_usuario(id)
+    instancia_conexion.registrar(cursor, usuario, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
 
@@ -245,15 +234,15 @@ def delete_usuario(datos_usuario, id):
 
 # Ruta que efectua la busqueda mediante la entrada de la barra de busqueda
 @usuario_route.route('/search_user')
-
 @validation_jwt
+@validation_acces
 def busqueda_usuario(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuario.busqueda_usuario(filtro)
-    usuario_detalles = instancia_conexion.todos_parametros(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.busqueda_usuario(filtro)
+    usuario_detalles = instancia_conexion.todos_parametros(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -261,16 +250,16 @@ def busqueda_usuario(datos_usuario):
 
 # Ruta que efectua la busqueda mediante la entrada de la barra de busqueda tomando en cuenta el filtro de nivel de acceso
 @usuario_route.route('/search_user_access')
-
 @validation_jwt
+@validation_acces
 def busqueda_usuario_acceso(datos_usuario):
     filtro = (f'%{request.args['buscar']}%')
     categoria = request.args['acceso']
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuario.busqueda_usuario_acceso(filtro, categoria)
-    usuario_detalles = instancia_conexion.todos_parametros(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.busqueda_usuario_acceso(filtro, categoria)
+    usuario_detalles = instancia_conexion.todos_parametros(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']

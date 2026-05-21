@@ -52,7 +52,6 @@ class Usuario(object):
         return query, parametros
 
     def login(self, nombre):
-        #query = "SELECT usuario.id_usuario, usuario.nombre_usuario, usuario.clave, usuario.imagen_usu, niveles_acceso.nombre_nivel FROM usuario INNER JOIN niveles_acceso ON usuario.id_nivel = niveles_acceso.id_nivel WHERE nombre_usuario = %s AND clave = %s"
         query = "SELECT usuario.id_usuario, usuario.nombre_usuario, usuario.clave, usuario.imagen_usu, niveles_acceso.nombre_nivel FROM usuario INNER JOIN niveles_acceso ON usuario.id_nivel = niveles_acceso.id_nivel WHERE nombre_usuario = %s"
         parametros = (nombre,)
         return query, parametros

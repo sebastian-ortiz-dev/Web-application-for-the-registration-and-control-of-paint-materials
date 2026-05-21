@@ -1,4 +1,5 @@
 from flask import Flask
+from middleware.auth import *
 import os
 from dotenv import load_dotenv
 # import all the routes
@@ -14,6 +15,7 @@ from rutas.ruta_sin_movimiento.sin_movimiento import sin_movimiento_route
 from rutas.ruta_inactivos.inactivos import inactivos_route
 from rutas.ruta_configuraciones.configuraciones import configuracion_route
 from rutas.ruta_reporte.reportes import reporte_route
+from rutas.ruta_error_handler.error_handler import handler_error_route
 
 # main controllator
 app=Flask(__name__)
@@ -23,6 +25,9 @@ clave = app.secret_key = os.getenv('SECRET_KEY')
 
 # route login
 app.register_blueprint(login_route)
+
+# route error handler
+app.register_blueprint(handler_error_route)
 
 # route dahsboard principal
 app.register_blueprint(dashboard_route)
