@@ -4,7 +4,6 @@ from middleware.decode import data_jwt
 from secure.create_cookie import create_cookie_refresh
 import jwt
 
-
 def validation_jwt(func):
     def wrap(*args, **kwargs):
         try:

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from dotenv import load_dotenv
 from model_db.conexion import Conexion
 from model_db.model_class.model_usuario import *
@@ -18,6 +18,7 @@ usuarios = Usuario()
 refresh = Refresh_token()
 hash = Hash_password()
 instancia_conexion = Conexion()
+
 # Ruta donde el usuario ingresa los datos y se consulta a la DB
 @login_route.route("/login", methods=['GET', 'POST'])
 def login():

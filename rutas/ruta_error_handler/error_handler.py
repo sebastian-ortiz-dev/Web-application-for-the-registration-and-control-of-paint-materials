@@ -19,5 +19,5 @@ def resource_not_found(datos_usuario, e):
     return render_template('error_universal.html', status_code=405, error_title="Method not allowed", error_message="The method http isn't allow in this endpoint"), 405
 
 @handler_error_route.app_errorhandler(500)
-def resource_not_found(datos_usuario, e):
+def internal_server_error(e):
     return render_template('error_universal.html', status_code=500, error_title="Internal Server Error", error_message="Something went wrong. Please try again later."), 500
