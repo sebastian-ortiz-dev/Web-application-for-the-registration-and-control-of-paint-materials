@@ -1,19 +1,14 @@
-from flask import redirect, url_for, request, flash, abort
+from flask import redirect, url_for, request, flash
 from middleware.refresh import refresh_token_validation, refresh_token
+from middleware.decode import data_jwt
 from secure.create_cookie import create_cookie_refresh
-from dotenv import load_dotenv
 import jwt
-import os
 
-load_dotenv()
-def data_jwt(encode):
-    decode = jwt.decode(encode, key=os.getenv("KEY"), algorithms="HS256")
-    return decode
 
 def validation_jwt(func):
     def wrap(*args, **kwargs):
         try:
-            dato = jwt.decode(request.cookies.get("token"), key=os.getenv("KEY"), algorithms="HS256") 
+            dato = data_jwt(request.cookies.get('token'))
         except jwt.ExpiredSignatureError as e:
             result = refresh_token_validation(request.cookies.get("refresh"))
             if result:

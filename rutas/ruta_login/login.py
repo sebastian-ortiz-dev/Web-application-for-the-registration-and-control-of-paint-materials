@@ -4,7 +4,7 @@ from model_db.conexion import Conexion
 from model_db.model_class.model_usuario import *
 from model_db.model_class.model_refresh_token import Refresh_token
 from middleware.create_jwt import *
-from middleware.auth import data_jwt
+from middleware.decode import data_jwt
 from secure.create_cookie import *
 from secure.delete_cookie import delete_cookie
 from secure.hash_password import Hash_password

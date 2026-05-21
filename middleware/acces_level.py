@@ -1,5 +1,5 @@
 from flask import request, abort, redirect, url_for
-from middleware.auth import data_jwt
+from middleware.decode import data_jwt
 
 def validation_acces(func):
     def wrap(*args, **kwargs):
