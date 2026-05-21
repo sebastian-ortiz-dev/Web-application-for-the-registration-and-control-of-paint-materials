@@ -2,16 +2,10 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from middleware.auth import validation_jwt
 from middleware.acces_level import validation_acces
 from secure.process_image import *
-from secure.hash_password import Hash_password
 from werkzeug.utils import secure_filename
 from datetime import date
 import os
 from secure.file_secure import allowed_file
-from model_db.conexion import Conexion
-from model_db.model_class.model_usuario import Usuario
-from model_db.model_class.model_acceso import Acceso
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_listado import Tipo_listado
 from model_db.class_singlen import productor, acceso, usuarios, listado, hash, instancia_conexion
 
 # Rutas relacionadas a los usuarios de la aplicacion web
