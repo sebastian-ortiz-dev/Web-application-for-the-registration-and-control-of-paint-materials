@@ -4,7 +4,6 @@ from secure.process_image import *
 from werkzeug.utils import secure_filename
 from datetime import date, datetime
 import os
-
 from secure.file_secure import allowed_file
 from model_db.conexion import Conexion
 from model_db.model_class.model_movimientos import Movimientos

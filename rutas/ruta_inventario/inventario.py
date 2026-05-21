@@ -6,24 +6,13 @@ from werkzeug.utils import secure_filename
 from datetime import date
 import os
 from secure.file_secure import allowed_file
-from model_db.conexion import Conexion
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_proveedor import Proveedor
-from model_db.model_class.model_categoria import Categoria
-from model_db.model_class.model_medida import Medida
-from model_db.model_class.model_listado import Tipo_listado
 from secure.obtener_proveedores import get_producto_id
 from secure.sin_movimientos import limpiar
+from model_db.class_singlen import productor, proveedor, category, medida, listado, instancia_conexion
 
 # Rutas relacionadas al inventario de la aplicacion web
 inventario_route = Blueprint('inventario', __name__, template_folder='templates')
 
-productor = Producto() 
-proveedor = Proveedor()
-categorias = Categoria()
-medida = Medida()
-listado = Tipo_listado()
-instancia_conexion = Conexion()
 
 # Ruta que lista los productos con su proveedor, esta es la vista del Administrador
 @inventario_route.route('/')
@@ -33,7 +22,7 @@ def index(datos_usuario):
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto = instancia_conexion.todos(cursor, productor.listar())
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -47,7 +36,7 @@ def trabajador(datos_usuario):
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     producto = instancia_conexion.todos(cursor, productor.listar())
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -62,7 +51,7 @@ def tipo_listado(datos_usuario, categoria):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
     texto, parametro = listado.listar(categoria)
     producto = instancia_conexion.todos_parametros(cursor, texto, parametro)
-    categoria_todas = instancia_conexion.todos(cursor, categorias.listar())
+    categoria_todas = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -79,7 +68,7 @@ def producto_filtro_busqueda(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     texto, parametro = productor.busqueda_productos_categoria(filtro, categoria)
     producto = instancia_conexion.todos_parametros(cursor, texto, parametro)
-    categoria_todas = instancia_conexion.todos(cursor, categorias.listar())
+    categoria_todas = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -93,7 +82,7 @@ def producto_proveedores(datos_usuario):
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     producto = instancia_conexion.todos(cursor, productor.listar())
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     if len(producto) != 0:
         # mejorar, se puede usar un set y restarlo para obtener los proveedores sin necesidad de un for en la linea 97
         id_productos = get_producto_id(producto)
@@ -120,7 +109,7 @@ def producto_proveedores_busqueda(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     texto, parametro = productor.busqueda_productos(filtro)  
     producto = instancia_conexion.todos_parametros(cursor, texto, parametro)
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     if len(producto) != 0:
         id_productos = get_producto_id(producto)
         proveedores, parametro = productor.obtener_proveedores(tuple(id_productos))
@@ -147,7 +136,7 @@ def editar(datos_usuario, id):
     producto, parametro = productor.obtener_uno(id) 
     producto_detalles = instancia_conexion.uno(cursor, producto, parametro)
     proveedores = instancia_conexion.todos(cursor, proveedor.listar_varios())
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     medidas = instancia_conexion.todos(cursor, medida.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
@@ -265,7 +254,7 @@ def busqueda(datos_usuario):
     alerta = instancia_conexion.todos(cursor, minimo_cantidad) 
     producto, parametro = productor.busqueda_productos(filtro)
     resultado_busqueda = instancia_conexion.todos_parametros(cursor, producto, parametro)
-    categoria = instancia_conexion.todos(cursor, categorias.listar())
+    categoria = instancia_conexion.todos(cursor, category.listar())
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']

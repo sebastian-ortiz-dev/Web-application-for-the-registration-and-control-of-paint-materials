@@ -5,6 +5,7 @@ from model_db.conexion import Conexion
 from model_db.model_class.model_producto import *
 from model_db.model_class.model_refresh_token import Refresh_token
 from model_db.model_class.model_usuario import Usuario
+from secure.create_cookie import create_cookie
 from dotenv import load_dotenv
 from datetime import date
 import uuid
@@ -13,6 +14,19 @@ load_dotenv()
 refresh = Refresh_token()
 user = Usuario()
 instancia_conexion = Conexion()
+
+def refresh_login(encode, recovery, recuperado, cursor, pool_db):
+    if recovery:
+        token = create_cookie(encode, recovery[1])
+        return token
+    else:
+        verify = str(uuid.uuid4())
+        query, parameters = refresh.create_refresh(recuperado, verify, False, date.today())
+        instancia_conexion.registrar(cursor, query, parameters)
+        instancia_conexion.ejecutar_cambio(pool_db)
+        token = create_cookie(encode, verify)
+        print(cursor)
+        return token
 
 def refresh_token_validation(uuid):
     pool_db, cursor = instancia_conexion.iniciar_conexion()

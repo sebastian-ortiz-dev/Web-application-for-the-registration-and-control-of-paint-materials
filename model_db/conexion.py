@@ -1,4 +1,4 @@
-from flask import flash, abort
+from flask import abort
 from psycopg2.pool import ThreadedConnectionPool
 import os
 from dotenv import load_dotenv
@@ -9,6 +9,7 @@ class Conexion():
     def __init__(self):
         pass
         
+    @classmethod    
     def iniciar_conexion(self):
         try:
             self.connection_db = ThreadedConnectionPool(1, 15, dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'), port='5432')
@@ -17,7 +18,6 @@ class Conexion():
             return pool_db, cursor
         except Exception as e:
             print("Ha ocurrido un error al conectar a la base de datos: ", e)
-            flash("¡Error! Ha ocurrido un error en el servidor intentelo otra vez mas tarde")
             abort(500)
     
     def todos(self, ejecuta, texto):
@@ -44,10 +44,8 @@ class Conexion():
             pool_db.rollback()
             print("Ha ocurrido un error al conectar a la base de datos: ", e)
             
-
     @classmethod
     def cerrar_conexion(self, cursor, pool_db):
         cursor.close()
         self.connection_db.putconn(pool_db)
-        #self.db.close()
         
