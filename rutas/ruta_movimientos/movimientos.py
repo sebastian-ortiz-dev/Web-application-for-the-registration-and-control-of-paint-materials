@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, logging
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from middleware.auth import validation_jwt
 from secure.process_image import *
 from werkzeug.utils import secure_filename
@@ -136,6 +136,7 @@ def registrar_salida(datos_usuario):
         instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
         resultado = instancia_conexion.ejecutar_cambio(pool_db)
     except Exception as e:
+        instancia_conexion.revertir_cambio(pool_db)
         print(f"error: {e}")
         flash('El producto elegido no tiene la cantidad en existencia suficiente')
         return redirect(url_for('movimiento.movimiento'))
@@ -178,6 +179,7 @@ def registrar_devolucion(datos_usuario):
         instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
         resultado = instancia_conexion.ejecutar_cambio(pool_db)
     except Exception as e:
+        instancia_conexion.revertir_cambio(pool_db)
         flash('El producto elegido no tiene la cantidad en existencia suficiente')
         return redirect(url_for('movimiento.movimiento'))
     finally:
@@ -219,6 +221,7 @@ def registrar_Ajuste(datos_usuario):
         instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
         resultado = instancia_conexion.ejecutar_cambio(pool_db)
     except:
+        instancia_conexion.revertir_cambio(pool_db)
         flash('El producto elegido no tiene la cantidad en existencia suficiente')
         return redirect(url_for('movimiento.movimiento'))
     finally:

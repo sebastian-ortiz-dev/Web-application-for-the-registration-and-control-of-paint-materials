@@ -41,10 +41,14 @@ class Conexion():
             pool_db.commit()
             return True
         except Exception as e:
-            pool_db.rollback()
+            self.revertir_cambio(pool_db)
             print("Ha ocurrido un error al conectar a la base de datos: ", e)
             return False
-            
+        
+    @classmethod
+    def revertir_cambio(self, pool_db):
+        pool_db.rollback()
+
     @classmethod
     def cerrar_conexion(self, cursor, pool_db):
         cursor.close()
