@@ -9,6 +9,7 @@ dockerfile_2
 test.py
 ./backup_reportes/*
 ./reportes/*
+practice.py
 
 __pycache__/
 .pyc

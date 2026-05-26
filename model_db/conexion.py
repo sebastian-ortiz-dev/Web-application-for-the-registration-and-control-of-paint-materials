@@ -43,6 +43,7 @@ class Conexion():
         except Exception as e:
             pool_db.rollback()
             print("Ha ocurrido un error al conectar a la base de datos: ", e)
+            return False
             
     @classmethod
     def cerrar_conexion(self, cursor, pool_db):
