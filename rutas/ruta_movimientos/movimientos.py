@@ -126,7 +126,7 @@ def registrar_salida(datos_usuario):
     productos, parametro = productor.obtener_cantidad(producto) 
     cantidad_existencia = instancia_conexion.uno(cursor, productos, parametro) 
 
-    if int(cantidad) <= int(cantidad_existencia[0]) and int(cantidad_existencia[0]) > 0:
+    try:
         cantidad_total = int(cantidad_existencia[0]) - int(cantidad)
         consulta, parametros = productor.modifica_cantidad(producto, cantidad_total)
         instancia_conexion.registrar(cursor, consulta, parametros)
@@ -135,16 +135,21 @@ def registrar_salida(datos_usuario):
         registrar_movimiento,parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
         instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
         resultado = instancia_conexion.ejecutar_cambio(pool_db)
-        instancia_conexion.cerrar_conexion(cursor, pool_db)
-        if resultado:
-            flash('Movimiento registrado exitosamente')
-            return redirect(url_for('movimiento.movimiento'))
-        else:
-            flash('¡Error! ha ocurrido un error al registrar el movimiento')
-            return redirect(url_for('movimiento.movimiento'))
-    else:
+    except Exception as e:
+        instancia_conexion.revertir_cambio(pool_db)
+        print(f"error: {e}")
         flash('El producto elegido no tiene la cantidad en existencia suficiente')
         return redirect(url_for('movimiento.movimiento'))
+    finally:
+        instancia_conexion.cerrar_conexion(cursor, pool_db)
+
+    if resultado:
+        flash('Movimiento registrado exitosamente')
+        return redirect(url_for('movimiento.movimiento'))
+    else:
+        flash('¡Error! ha ocurrido un error al registrar el movimiento')
+        return redirect(url_for('movimiento.movimiento'))
+    
 
 # Ruta que registra una devolucion en la DB  
 @movimiento_route.route("/registrar_devolucion", methods=["POST"])
@@ -161,23 +166,24 @@ def registrar_devolucion(datos_usuario):
     cantidad_existencia = instancia_conexion.uno(cursor, productos, parametro)
 
     if int(tipo_devolucion) == 1:
-        if int(cantidad) <= int(cantidad_existencia[0]) and int(cantidad_existencia[0]) > 0:
-            cantidad_total = int(cantidad_existencia[0]) - int(cantidad)
-        else:
-            instancia_conexion.cerrar_conexion(cursor)
-            flash('El producto elegido no tiene la cantidad en existencia suficiente')
-            return redirect(url_for('movimiento.movimiento'))
+        cantidad_total = int(cantidad_existencia[0]) - int(cantidad)
     else:
         cantidad_total = int(cantidad_existencia[0]) + int(cantidad)
 
-    consulta, parametro = productor.modifica_cantidad(producto, cantidad_total)
-    instancia_conexion.registrar(cursor, consulta, parametro)
-    productos, parametro = productor.obtener_uno(producto)
-    recuperar_producto = instancia_conexion.uno(cursor, productos, parametro)
-    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
-    instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
-    resultado = instancia_conexion.ejecutar_cambio(pool_db)
-    instancia_conexion.cerrar_conexion(cursor, pool_db)
+    try:
+        consulta, parametro = productor.modifica_cantidad(producto, cantidad_total)
+        instancia_conexion.registrar(cursor, consulta, parametro)
+        productos, parametro = productor.obtener_uno(producto)
+        recuperar_producto = instancia_conexion.uno(cursor, productos, parametro)
+        registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
+        instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
+        resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    except Exception as e:
+        instancia_conexion.revertir_cambio(pool_db)
+        flash('El producto elegido no tiene la cantidad en existencia suficiente')
+        return redirect(url_for('movimiento.movimiento'))
+    finally:
+        instancia_conexion.cerrar_conexion(cursor, pool_db)
 
     if resultado:
         flash('Movimiento registrado exitosamente')
@@ -200,25 +206,26 @@ def registrar_Ajuste(datos_usuario):
     cantidad_existencia = instancia_conexion.uno(cursor, productos, parametro)
     
     if int(tipo_devolucion) == 1:
-        if int(cantidad) <= int(cantidad_existencia[0]) and int(cantidad_existencia[0]) > 0:
-            cantidad_total = int(cantidad_existencia[0]) - int(cantidad)
-            motivo = "Error de conteo, disminucion de stock"
-        else:
-            instancia_conexion.cerrar_conexion()
-            flash('El producto elegido no tiene la cantidad en existencia suficiente')
-            return redirect(url_for('movimiento.movimiento'))
+        cantidad_total = int(cantidad_existencia[0]) - int(cantidad)
+        motivo = "Error de conteo, disminucion de stock"
     else:
         cantidad_total = int(cantidad_existencia[0]) + int(cantidad)
         motivo = "Error de conteo, aumento de stock"
 
-    consulta, parametro = productor.modifica_cantidad(producto, cantidad_total)
-    instancia_conexion.registrar(cursor, consulta, parametro)
-    productos, parametro = productor.obtener_uno(producto)
-    recuperar_producto = instancia_conexion.uno(cursor, productos, parametro)
-    registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
-    instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
-    resultado = instancia_conexion.ejecutar_cambio(pool_db)
-    instancia_conexion.cerrar_conexion(cursor, pool_db)
+    try:
+        consulta, parametro = productor.modifica_cantidad(producto, cantidad_total)
+        instancia_conexion.registrar(cursor, consulta, parametro)
+        productos, parametro = productor.obtener_uno(producto)
+        recuperar_producto = instancia_conexion.uno(cursor, productos, parametro)
+        registrar_movimiento, parametro = historial.movimiento(recuperar_producto[0], cantidad, datetime.now(), datos_usuario['sub'], motivo, tipo_movimiento)
+        instancia_conexion.registrar(cursor, registrar_movimiento, parametro)
+        resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    except:
+        instancia_conexion.revertir_cambio(pool_db)
+        flash('El producto elegido no tiene la cantidad en existencia suficiente')
+        return redirect(url_for('movimiento.movimiento'))
+    finally:
+        instancia_conexion.cerrar_conexion(cursor, pool_db)
       
     if resultado:
         flash('Movimiento registrado exitosamente')
