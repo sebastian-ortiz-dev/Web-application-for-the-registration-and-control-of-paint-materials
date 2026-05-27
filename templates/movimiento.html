@@ -31,7 +31,7 @@
         <h1 class="text-xl  ml-5 text-center mb-4 pt-2">Elija el tipo de movimiento que hara: </h1>
         <label for="movimiento" class="text-xl font-medium text-gray-700 ml-5">Seleccione el movimiento:</label>
         {% if movimiento %}
-          <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm " id="movimiento" name="movimiento" onchange="cambio()">
+          <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm" id="movimiento" name="movimiento" onchange="cambio()">
             <option value="">-- Elige una opción --</option>
             {% for movimientos in movimiento %}
               <option value="{{ movimientos[0] }}">{{ movimientos[1] }}</option>

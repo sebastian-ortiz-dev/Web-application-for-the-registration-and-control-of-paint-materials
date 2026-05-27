@@ -1,7 +1,7 @@
 <div class="flex flex-wrap gap-6"> 
     {% for producto in productos %}
         {% if producto[2] == proveedores[0]%}
-            <div class="bg-white p-4 px-5 rounded-lg shadow-md m-5 hover:shadow-2xl justify-between">
+            <div class="bg-white p-4 px-5 rounded-lg shadow-md m-5 hover:shadow-2xl justify-between transation-all duration-500">
               <img src="{{ url_for('static', filename='img/productos/' + producto[4] ) }}" alt="Imagen_producto" class="w-42 h-40" />
               <div>
                 <h3 class="mt-2 text-xl font-semibold mb-1">{{ producto[1] }}</h3>
