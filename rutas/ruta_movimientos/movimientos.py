@@ -6,6 +6,7 @@ from datetime import date, datetime
 import os
 from secure.file_secure import allowed_file
 from model_db.class_singlen import productor, proveedor, category, medida, movimientos, historial, instancia_conexion
+import json
 
 # Rutas relacionadas a los movimientos de la aplicacion web
 movimiento_route = Blueprint('movimiento', __name__, template_folder='templates')
@@ -30,7 +31,8 @@ def movimiento(datos_usuario):
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
-    return render_template('movimiento.html', nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta, movimiento=movimiento_todo, productos=producto, distribuidores=proveedores, categorias=categoria, medidas=medidas)
+    json_productos = json.dumps(producto)
+    return render_template('movimiento.html', nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta, movimiento=movimiento_todo, productos=producto, productos_json=json_productos, distribuidores=proveedores, categorias=categoria, medidas=medidas)
 
 # Ruta que registra una entrada en la DB de un producto existente
 @movimiento_route.route('/registrar_entrada_existente', methods=["POST"])
@@ -40,7 +42,9 @@ def registrar_entrada(datos_usuario):
     motivo = "Entrada de producto"
     producto = request.form['producto']
     cantidad = request.form['cantidad_entrada']
-        
+    prueba = request.form['valor_id']
+    print("debo estar aqui!")
+    print(prueba)
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     productos, parametro = productor.obtener_cantidad(producto)
     existencia = instancia_conexion.uno(cursor, productos, parametro)
@@ -86,8 +90,6 @@ def registrar_entrada_no_existente(datos_usuario):
     if not image_verification(imagen):
         flash('Formato de imagen no permitido')
         return redirect(url_for('movimiento.movimiento'))
-
-    print(imagen)
 
     if imagen and allowed_file(imagen.filename):
         filename = secure_filename(imagen.filename)

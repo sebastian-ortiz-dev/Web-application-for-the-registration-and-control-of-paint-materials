@@ -7,7 +7,7 @@
     <link href="/static/css/output.css" rel="stylesheet" />
     <link href="/static/img/icono/pintuplomer_logo.ico" rel="shortcut icon" />
 </head>
-<body class="bg-slate-100 flex">
+<body class="bg-slate-100 flex" onclick="ocultar_lista()">
     
   {% include 'components/navegacion_if.html' %}
 
@@ -31,7 +31,7 @@
         <h1 class="text-xl  ml-5 text-center mb-4 pt-2">Elija el tipo de movimiento que hara: </h1>
         <label for="movimiento" class="text-xl font-medium text-gray-700 ml-5">Seleccione el movimiento:</label>
         {% if movimiento %}
-          <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm" id="movimiento" name="movimiento" onchange="cambio()">
+          <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm cursor-pointer" id="movimiento" name="movimiento" onchange="cambio()">
             <option value="">-- Elige una opción --</option>
             {% for movimientos in movimiento %}
               <option value="{{ movimientos[0] }}">{{ movimientos[1] }}</option>
@@ -45,7 +45,7 @@
         <div class="bg-white mx-[270px] border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl"> 
           <h2 class="text-center mb-3 text-2xl text-slate-800">Entrada de Productos</h2>
           <label for="producto_entrada" class="text-xl font-medium text-gray-700 ">Tipo de Producto:</label>
-          <select id="tipo" name="tipo" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mb-1" onchange="formu()"> 
+          <select id="tipo" name="tipo" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mb-1 cursor-pointer" onchange="formu()"> 
             <option value="">-- Elige una opción --</option>
             <option value="Existente">Existente</option>
             <option value="Nuevo">Nuevo</option>
@@ -59,8 +59,25 @@
                   <option value="{{ producto[0] }}">ID:{{ producto[0] }}. {{ producto[1] }}</option>
                 {% endfor %}
               </select> <br>
+              <label for="cabezero" class="text-xl font-medium text-gray-700">Producto:</label>
+              <div class="relative">
+                <input type="text" id="cabezero" name="cabezero" placeholder="nombre del producto" class="flex cursor-pointer border border-gray-300 p-1 rounded-sm w-50" autocomplete="off" onclick="mostrar_lista()" oninput="llamada()">
+                <div id="lista" name="lista" class="absolute max-h-34 max-w-65 top-full border border-gray-300 bg-white z-50 mt-1 rounded-sm text-gray-700 overflow-y-auto overflow-x-hidden">
+                  {% for producto in productos %}
+                    <div id="{{ producto[0] }}" class="cursor-pointer hover:bg-gray-300 text-lg transation-all duration-400 flex" onclick="ponerTexto('{{ producto[0] }}')">
+                      <p class="mx-1">ID: {{ producto[0]}} </p>
+                      <p name="prueba" data-value="{{ producto[0] }}">{{ producto[1] }}</p>
+                    </div>
+                  {% endfor %}
+                  <div id="no_found" class="justify-center text-lg w-50 hidden">
+                      <p class="mx-1">No matches found</p>
+                  </div>
+                </div>
+              </div> 
+              <p id="json" name="json" style="display: none;">{{ productos_json }}</p>
               <label for="cantidad_entrada" class="text-xl font-medium text-gray-700 ">Cantidad:</label> <br>
               <input type="number" id="cantidad_entrada" name="cantidad_entrada" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm " required> <br> 
+              <input type="number" id="valor_id" name="valor_id" value="" style="display: none;">
               <button type="submit" class="bg-green-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-green-600 mb-2 mt-2">Registrar Entrada</button>
             </form>
           </div>
@@ -171,6 +188,8 @@
     </div>
 
   </div>
+<script src="{{ url_for('static', filename='js/mostrar_lista_productos.js')}}"></script>
+<script src="{{ url_for('static', filename='js/filtro_product.js')}}"></script>
 <script src="{{ url_for('static', filename='js/formularios.js') }}"></script>
 </body>
 </html>

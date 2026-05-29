@@ -50,7 +50,7 @@ class Producto(object):
         return query
     
     def listar_necesario(self):
-        return "SELECT producto.id_producto, producto.nombre_producto FROM producto ORDER BY producto.id_producto ASC"
+        return "SELECT producto.id_producto, producto.nombre_producto FROM producto WHERE borrado=false ORDER BY producto.id_producto ASC"
     
     def listar_lista(self, lista):
         query = "SELECT p.id_producto, p.nombre_producto, p.id_distribuidor, p.cantidad, p.imagen, p.precio_venta, p.id_categoria, u.medida FROM producto p INNER JOIN unidad_medida u ON p.id_medida = u.id_medida WHERE p.id_producto IN %s AND p.borrado = FALSE ORDER BY p.id_producto ASC "
@@ -59,7 +59,7 @@ class Producto(object):
     
     def listar_id(self):
         return "SELECT array_agg(producto.id_producto) FROM producto WHERE borrado = FALSE AND producto.last_moviment = FALSE" 
-    
+
     def listar_id_unicos(self, lista):
         query = "SELECT producto.id_producto FROM producto WHERE id_producto IN %s AND borrado = FALSE"
         parametros = (lista,)
@@ -93,7 +93,7 @@ class Producto(object):
         return query, parametros
 
     def obtener_cantidad(self, id):
-        query = "SELECT cantidad FROM producto WHERE id_producto=%s"
+        query = "SELECT cantidad FROM producto WHERE id_producto=%s FOR UPDATE"
         parametros = (id,)        
         return query, parametros
     
