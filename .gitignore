@@ -11,6 +11,7 @@ test.py
 ./reportes/*
 practice.py
 filtro.js
+practica.py
 
 __pycache__/
 .pyc
