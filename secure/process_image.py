@@ -1,4 +1,3 @@
-from flask import flash
 from PIL import Image
 import os
 import io
