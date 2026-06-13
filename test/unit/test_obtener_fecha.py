@@ -29,6 +29,14 @@ def test_formato_fecha_salida_es_correcto_mes():
     assert type(response) != date
     assert type(response) == str
 
+def teset_formato_fecha_hace_30_dias():
+    today, days_ago = dia()
+
+    assert type(today) == date
+    assert type(today) != None
+    assert type(days_ago) == date
+    assert type(days_ago) != None
+
 def test_manejo_fecha_borde_o_vacia_este_mes():
     date_void = None
 
