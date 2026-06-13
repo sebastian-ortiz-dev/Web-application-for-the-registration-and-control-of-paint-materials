@@ -3,7 +3,7 @@ from middleware.auth import validation_jwt
 from datetime import date, datetime
 from model_db.class_singlen import productor, historial, usuarios, instancia_conexion
 from jinja2 import Environment, FileSystemLoader
-from secure.generar_reporte import *
+from services.generar_reporte import *
 # Rutas relacionadas con los reportes
 reporte_route = Blueprint('reporte', __name__, template_folder='templates')
 

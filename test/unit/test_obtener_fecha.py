@@ -1,4 +1,4 @@
-from secure.obtener_fecha import este_mes, mes
+from utils.obtener_fecha import este_mes, mes, dia
 from datetime import date
 
 def test_formato_fecha_salida_es_correcto_este_mes():

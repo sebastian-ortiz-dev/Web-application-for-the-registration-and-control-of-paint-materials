@@ -1,10 +1,3 @@
-from datetime import date, timedelta
-
-def dia():
-    hoy = date.today()
-    hace_30 = hoy - timedelta(days=30)
-    return hoy, hace_30
-
 def sin_movimiento(id_productos, id_movimientos):
         if id_movimientos is None or id_productos is None:
             no_movimientos = []

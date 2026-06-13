@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request
 from middleware.auth import validation_jwt
 from model_db.class_singlen import productor, proveedor, category, listado, instancia_conexion
-from secure.obtener_proveedores import get_producto_id
-from secure.sin_movimientos import limpiar
+from utils.obtener_proveedores import get_producto_id
+from utils.sin_movimientos import limpiar
 
 # Rutas relacionadas a los productos sin movimientos de la aplicacion web
 sin_movimiento_route = Blueprint('sin_movimiento', __name__, template_folder='templates')

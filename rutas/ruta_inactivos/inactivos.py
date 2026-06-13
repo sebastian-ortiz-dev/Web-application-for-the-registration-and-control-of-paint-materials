@@ -1,12 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from middleware.auth import validation_jwt
 from middleware.acces_level import validation_acces
-from model_db.conexion import Conexion
-from model_db.model_class.model_producto import Producto
-from model_db.model_class.model_listado import Tipo_listado
-from model_db.model_class.model_proveedor import Proveedor
-from model_db.model_class.model_usuario import Usuario
-from model_db.class_singlen import productor, proveedor, listado, usuarios, instancia_conexion
+from model_db.class_singlen import productor, proveedor, usuarios, instancia_conexion
 
 # Rutas relacionadas a los productos, proveedores y perfiles inactivos
 inactivos_route = Blueprint('inactivos', __name__, template_folder='templates')

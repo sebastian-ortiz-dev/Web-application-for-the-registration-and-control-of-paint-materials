@@ -1,4 +1,10 @@
-from datetime import date
+from datetime import date, timedelta
+
+def dia():
+    hoy = date.today()
+    hace_30 = hoy - timedelta(days=30)
+    return hoy, hace_30
+
 def este_mes(fecha):
     if fecha == None:
         fecha = date.today()

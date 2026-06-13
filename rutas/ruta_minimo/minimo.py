@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from middleware.auth import validation_jwt
-from secure.obtener_proveedores import get_producto_id
-from secure.sin_movimientos import limpiar
+from utils.obtener_proveedores import get_producto_id
+from utils.sin_movimientos import limpiar
 from model_db.class_singlen import productor, proveedor, listado, category, instancia_conexion
 # Rutas relacionadas al inventario con alerta a en stock minimo de la aplicacion web
 
