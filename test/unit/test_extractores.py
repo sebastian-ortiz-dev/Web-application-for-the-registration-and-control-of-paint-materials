@@ -1,4 +1,5 @@
 from utils.sin_movimientos import sin_movimiento, limpiar
+from utils.obtener_proveedores import get_producto_id
 
 def test_sin_movimientos_con_lista_vacia_devuelve_set():
     id_productos = [5,4,6,2,3,8]
@@ -39,7 +40,7 @@ def test_obtener_proveedores_con_lista_vacia_devuelve_lista_vacia():
 def test_obtener_proveedores_con_datos_brutos_extrae_campos_correctos():
     datos_postgres_tuples = [(101, "Tubo PVC 1/2"), (102, "Llave de paso"), (103, "Cinta teflón")]
 
-    response = limpiar(datos_postgres_tuples)
+    response = get_producto_id(datos_postgres_tuples)
 
     assert response == [101, 102, 103]
     assert response != None
@@ -47,7 +48,7 @@ def test_obtener_proveedores_con_datos_brutos_extrae_campos_correctos():
 def test_obtener_proveedores_con_lista_vacia_devuelve_lista_vacia():
     datos_postgres_tuples_empty = []
 
-    response = limpiar(datos_postgres_tuples_empty)
+    response = get_producto_id(datos_postgres_tuples_empty)
 
     assert response == []
     assert response != None
