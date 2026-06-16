@@ -34,7 +34,7 @@ GRANT ALL ON SCHEMA public TO public;
 -- Name: distribuidor; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE distribuidor (
+CREATE TABLE IF NOT EXISTS distribuidor (
     id_distribuidor integer NOT NULL,
     nombre character varying(255) NOT NULL,
     correo character varying(255),
@@ -51,7 +51,7 @@ CREATE TABLE distribuidor (
 -- Name: Distribuidor_id_distribuidor_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE "Distribuidor_id_distribuidor_seq"
+CREATE SEQUENCE IF NOT EXISTS "Distribuidor_id_distribuidor_seq"
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -74,7 +74,7 @@ ALTER SEQUENCE "Distribuidor_id_distribuidor_seq" OWNED BY distribuidor.id_distr
 -- Name: movimientos_inventario; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE movimientos_inventario (
+CREATE TABLE IF NOT EXISTS movimientos_inventario (
     id_movimiento bigint NOT NULL,
     id_producto integer NOT NULL,
     cantidad integer,
@@ -90,7 +90,7 @@ CREATE TABLE movimientos_inventario (
 -- Name: Movimientos_Inventario_id_movimiento_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE "Movimientos_Inventario_id_movimiento_seq"
+CREATE SEQUENCE IF NOT EXISTS "Movimientos_Inventario_id_movimiento_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -112,7 +112,7 @@ ALTER SEQUENCE "Movimientos_Inventario_id_movimiento_seq" OWNED BY movimientos_i
 -- Name: producto; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE producto (
+CREATE TABLE IF NOT EXISTS producto (
     id_producto integer NOT NULL,
     nombre_producto character varying(255) NOT NULL,
     descripcion character varying(500),
@@ -134,7 +134,7 @@ CREATE TABLE producto (
 -- Name: Productos_id_producto_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE "Productos_id_producto_seq"
+CREATE SEQUENCE IF NOT EXISTS "Productos_id_producto_seq"
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -157,7 +157,7 @@ ALTER SEQUENCE "Productos_id_producto_seq" OWNED BY producto.id_producto;
 -- Name: usuario; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE usuario (
+CREATE TABLE IF NOT EXISTS usuario (
     id_usuario integer NOT NULL,
     nombre_usuario character varying(255) NOT NULL,
     clave text NOT NULL,
@@ -173,7 +173,7 @@ CREATE TABLE usuario (
 -- Name: Usuarios_id_usuario_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE "Usuarios_id_usuario_seq"
+CREATE SEQUENCE IF NOT EXISTS "Usuarios_id_usuario_seq"
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -196,7 +196,7 @@ ALTER SEQUENCE "Usuarios_id_usuario_seq" OWNED BY usuario.id_usuario;
 -- Name: categorias; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE categorias (
+CREATE TABLE IF NOT EXISTS categorias (
     id_categoria integer NOT NULL,
     categoria character(350)
 );
@@ -207,7 +207,7 @@ CREATE TABLE categorias (
 -- Name: categorias_id_categoria_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE categorias_id_categoria_seq
+CREATE SEQUENCE IF NOT EXISTS categorias_id_categoria_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -230,7 +230,7 @@ ALTER SEQUENCE categorias_id_categoria_seq OWNED BY categorias.id_categoria;
 -- Name: movimientos; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE movimientos (
+CREATE TABLE IF NOT EXISTS movimientos (
     id integer NOT NULL,
     movimiento character varying(255)
 );
@@ -241,7 +241,7 @@ CREATE TABLE movimientos (
 -- Name: movimientos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE movimientos_id_seq
+CREATE SEQUENCE IF NOT EXISTS movimientos_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -264,7 +264,7 @@ ALTER SEQUENCE movimientos_id_seq OWNED BY movimientos.id;
 -- Name: niveles_acceso; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE niveles_acceso (
+CREATE TABLE IF NOT EXISTS niveles_acceso (
     id_nivel integer NOT NULL,
     nombre_nivel character varying(255) NOT NULL
 );
@@ -275,7 +275,7 @@ CREATE TABLE niveles_acceso (
 -- Name: niveles_acceso_id_nivel_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE niveles_acceso_id_nivel_seq
+CREATE SEQUENCE IF NOT EXISTS niveles_acceso_id_nivel_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -298,7 +298,7 @@ ALTER SEQUENCE niveles_acceso_id_nivel_seq OWNED BY niveles_acceso.id_nivel;
 -- Name: refresh_token; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE refresh_token (
+CREATE TABLE IF NOT EXISTS refresh_token (
     id_refresh bigint NOT NULL,
     id_usuario bigint NOT NULL,
     uuid character varying(1000) NOT NULL,
@@ -312,7 +312,7 @@ CREATE TABLE refresh_token (
 -- Name: refresh_token _id_refresh_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE "refresh_token _id_refresh_seq"
+CREATE SEQUENCE IF NOT EXISTS "refresh_token _id_refresh_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -334,7 +334,7 @@ ALTER SEQUENCE "refresh_token _id_refresh_seq" OWNED BY refresh_token.id_refresh
 -- Name: unidad_medida; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE unidad_medida (
+CREATE TABLE IF NOT EXISTS unidad_medida (
     id_medida integer NOT NULL,
     medida character(50)
 );
@@ -345,7 +345,7 @@ CREATE TABLE unidad_medida (
 -- Name: unidad_medida_id_medida_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE unidad_medida_id_medida_seq
+CREATE SEQUENCE IF NOT EXISTS unidad_medida_id_medida_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
