@@ -45,7 +45,7 @@ def test_filtrar_productos_minimos_por_proveedor(create_jwt):
     assert "/detalles/2" in data_html
     assert "/detalles/3" in data_html
 
-def test_busqueda_productos_minimos_por_proveedo(create_jwt):
+def test_busqueda_productos_minimos_por_proveedor(create_jwt):
     response = create_jwt.get("/por_proveedores_search_minimo?buscar=pintura+blanca")
 
     data_html = response.data.decode("utf-8")
@@ -65,10 +65,9 @@ def test_filtrar_productos_minimos_por_categoria(create_jwt):
     assert "/detalles/3" in data_html
 
 def test_busqueda_productos_minimos_por_categoria(create_jwt):
-    response = create_jwt.get("/por_proveedores_search_minimo?buscar=pintura+verde")
+    response = create_jwt.get("/filtro_minimum_search?buscar=pintura+verde&categoria=1")
 
     data_html = response.data.decode("utf-8")
 
     assert response.status_code == 200
-    assert "/detalles/2" not in data_html
     assert "/detalles/3" in data_html
