@@ -12,10 +12,13 @@ from rutas.ruta_inactivos.inactivos import inactivos_route
 from rutas.ruta_configuraciones.configuraciones import configuracion_route
 from rutas.ruta_reporte.reportes import reporte_route
 from rutas.ruta_error_handler.error_handler import handler_error_route
+import os
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+template_route = os.path.join(base_dir, "..", "templates")
 
 def crear_app(config_name="development"):
-    app=Flask(__name__)
+    app=Flask(__name__, template_folder=template_route)
 
     if config_name == "testing":
         app.config.update({"TESTING": True})

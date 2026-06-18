@@ -613,6 +613,8 @@ INSERT INTO categorias (categoria) VALUES ('Pinturas y recubrimientos');
 
 INSERT INTO usuario (nombre_usuario, clave, id_nivel, imagen_usu, fecha_creacion) VALUES ('admin', '$argon2id$v=19$m=65536,t=3,p=4$f2kkd1t6h1nYMRI6XNT6KQ$1ogddX5jZbDWA1W3PiOfphLIltaywzNDxYo5yyx/3Oc', 1, 'usuario_defecto.png', '2026-04-20') ON CONFLICT (nombre_usuario) WHERE borrado = FALSE DO NOTHING;
 
+INSERT INTO usuario (nombre_usuario, clave, id_nivel, imagen_usu, fecha_creacion) VALUES ('worker', '$argon2id$v=19$m=65536,t=3,p=4$f2kkd1t6h1nYMRI6XNT6KQ$1ogddX5jZbDWA1W3PiOfphLIltaywzNDxYo5yyx/3Oc', 2, 'usuario_defecto.png', '2026-04-20') ON CONFLICT (nombre_usuario) WHERE borrado = FALSE DO NOTHING;
+
 INSERT INTO distribuidor (nombre, correo, direccion, telefono, rif, borrado, fecha_registro) VALUES ('proveedor', 'proveedor@gmail.com', 'San antonio de los altos', '0414-325-56-77', 'j-555656535', 'False', '2026-04-20');
 
 INSERT INTO producto (nombre_producto, descripcion, precio_venta, cantidad, fecha_actualizacion, imagen, id_distribuidor, borrado, id_categoria, id_medida, cantidad_minima) VALUES ('pintura roja', 'pintura roja', 20, 30, '2026-04-20', 'pintura.jpg', 1, 'False', 1, 1, 5);
