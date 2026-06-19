@@ -78,23 +78,43 @@ def test_admin_puede_modificar_producto(create_jwt):
     
     response = create_jwt.post("/cambios_producto/1", data=data_update)
 
+    pool,cursor = instancia_conexion.iniciar_conexion()
+    producto = instancia_conexion.uno(cursor, "SELECT producto.id_producto FROM producto WHERE descripcion = %s", (data_update["detalles"],))
+    instancia_conexion.cerrar_conexion(cursor, pool)
+
     assert response.status_code == 302
+    assert producto == (1,)
 
 def test_admin_puede_borrar_producto(create_jwt):
      
     response = create_jwt.post("/delete_producto/1")
 
+    pool,cursor = instancia_conexion.iniciar_conexion()
+    producto = instancia_conexion.uno(cursor, "SELECT producto.id_producto FROM producto WHERE producto.id_producto = %s AND borrado = TRUE", (1,))
+    instancia_conexion.cerrar_conexion(cursor, pool)
+
     assert response.status_code == 302
+    assert producto == (1,)
 
 def test_trabajador_no_puede_editar_producto(create_jwt_worker):
     imagen_vacia = (io.BytesIO(b""), "")
-    data_update = {"imagen": imagen_vacia, "nombre": "pintura roja", "detalles": "pintura roja clara", "precio": 30.00, "existencia": 50, "distribuidor": 1, "medida": 1, "categoria": 1, "minima": 5,}
+    data_update = {"imagen": imagen_vacia, "nombre": "pintura roja", "detalles": "pintura roja oscura", "precio": 30.00, "existencia": 50, "distribuidor": 1, "medida": 1, "categoria": 1, "minima": 5,}
     
     response = create_jwt_worker.post("/cambios_producto/1", data=data_update)
 
+    pool,cursor = instancia_conexion.iniciar_conexion()
+    producto = instancia_conexion.uno(cursor, "SELECT producto.id_producto FROM producto WHERE descripcion = %s", (data_update["detalles"],))
+    instancia_conexion.cerrar_conexion(cursor, pool)
+
     assert response.status_code == 403
+    assert producto == None
 
 def test_trabajador_no_puede_borrar_producto(create_jwt_worker):
-    response = create_jwt_worker.post("/delete_producto/1")
+    response = create_jwt_worker.post("/delete_producto/2")
+
+    pool,cursor = instancia_conexion.iniciar_conexion()
+    producto = instancia_conexion.uno(cursor, "SELECT producto.id_producto FROM producto WHERE producto.id_producto = %s AND borrado = TRUE", (2,))
+    instancia_conexion.cerrar_conexion(cursor, pool)
 
     assert response.status_code == 403
+    assert producto == None

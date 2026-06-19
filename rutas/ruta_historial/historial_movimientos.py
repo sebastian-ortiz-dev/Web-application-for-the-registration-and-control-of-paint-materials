@@ -7,7 +7,6 @@ historial_route = Blueprint('historial', __name__, template_folder='templates')
 
 # Ruta que lista todos los movimientos que se hacen
 @historial_route.route('/historia')
-
 @validation_jwt
 def historial_movimientos(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -22,7 +21,6 @@ def historial_movimientos(datos_usuario):
 
 # Ruta que lista todos los movimientos que se hacen
 @historial_route.route('/historia_filtro/<int:categoria>')
-
 @validation_jwt
 def historial_movimientos_filtro(datos_usuario, categoria):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -37,7 +35,6 @@ def historial_movimientos_filtro(datos_usuario, categoria):
 
 # Ruta que lista el resultado de la busqueda de movimientos en intervalos de tiempo
 @historial_route.route('/historial_intervalo')
-
 @validation_jwt
 def historial_intervalo(datos_usuario):
     desde = request.args['desde']
