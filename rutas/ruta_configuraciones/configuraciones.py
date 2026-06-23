@@ -23,6 +23,7 @@ def configuracion(datos_usuario):
 
 @configuracion_route.route("/agregar_categoria")
 @validation_jwt
+@validation_acces
 def agregar_categoria(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -34,6 +35,7 @@ def agregar_categoria(datos_usuario):
 
 @configuracion_route.route("/crear_categoria", methods=['POST'])
 @validation_jwt
+@validation_acces
 def crear_categoria(datos_usuario):
     nombre_categoria = request.form['nombre']
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -84,6 +86,7 @@ def modificar_categoria(datos_usuario, id):
 
 @configuracion_route.route("/agregar_medida")
 @validation_jwt
+@validation_acces
 def agregar_medida(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
@@ -92,6 +95,24 @@ def agregar_medida(datos_usuario):
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
     return render_template('agregar_medida.html', nombre=name, imagen=imagen_usuario, access_level=datos_usuario['nivel_acceso'], alerta=alerta)
+
+@configuracion_route.route("/crear_medida", methods=['POST'])
+@validation_jwt
+@validation_acces
+def crear_medida(datos_usuario):
+    nombre_medida = request.form['nombre']
+    pool_db, cursor = instancia_conexion.iniciar_conexion()
+    texto, parametro = medida.crear(nombre_medida)
+    instancia_conexion.registrar(cursor, texto, parametro)
+    resultado = instancia_conexion.ejecutar_cambio(pool_db)
+    instancia_conexion.cerrar_conexion(cursor, pool_db)
+
+    if resultado:
+        flash('Medida creada')
+        return redirect(url_for("configuracion.configuracion"))
+    else:
+        flash("Ha ocurrido un error al registrar la medida")
+        return redirect(url_for("configuracion.agregar_medida"))
 
 @configuracion_route.route("/editar_medida/<int:id>")
 @validation_jwt
@@ -110,7 +131,7 @@ def editar_medida(datos_usuario, id):
 @configuracion_route.route("/modificar_medida/<int:id>", methods=['POST'])
 @validation_jwt
 @validation_acces
-def modificar_medida(id, datos_usuario):
+def modificar_medida(datos_usuario, id):
     nombre = request.form['nombre']
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     texto, parametro = medida.modificar(nombre, id)
@@ -124,21 +145,3 @@ def modificar_medida(id, datos_usuario):
     else:
         flash("Error al realizar el cambio")
         return redirect(url_for("configuracion.editar_medida", id=id))
-
-
-@configuracion_route.route("/crear_medida", methods=['POST'])
-@validation_jwt
-def crear_medida(datos_usuario):
-    nombre_medida = request.form['nombre']
-    pool_db, cursor = instancia_conexion.iniciar_conexion()
-    texto, parametro = medida.crear(nombre_medida)
-    instancia_conexion.registrar(cursor, texto, parametro)
-    resultado = instancia_conexion.ejecutar_cambio(pool_db)
-    instancia_conexion.cerrar_conexion(cursor, pool_db)
-
-    if resultado:
-        flash('Medida creada')
-        return redirect(url_for("configuracion.configuracion"))
-    else:
-        flash("Ha ocurrido un error al registrar la medida")
-        return redirect(url_for("configuracion.agregar_medida"))

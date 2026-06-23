@@ -9,7 +9,7 @@ class Medida(object):
         return query, parametro
     
     def modificar(self, nombre, id):
-        query = "UPDATE unidad_media SET medida=%s WHERE %s"
+        query = "UPDATE unidad_medida SET medida=%s WHERE id_medida = %s"
         parametro = (nombre, id)
         return query, parametro
 
