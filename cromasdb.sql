@@ -126,6 +126,8 @@ CREATE TABLE IF NOT EXISTS producto (
     id_medida integer,
     last_moviment boolean DEFAULT false,
     cantidad_minima integer
+    CONSTRAINT limit_amount_product CHECK ((cantidad >= 0)),
+    CONSTRAINT limit_price_sell CHECK ((precio_venta >= (0)::numeric))
 );
 
 

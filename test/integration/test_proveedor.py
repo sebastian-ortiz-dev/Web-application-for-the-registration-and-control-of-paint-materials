@@ -8,6 +8,7 @@ def test_listar_proveedor(create_jwt):
     instancia_conexion.registrar(cursor, query, variables)
     instancia_conexion.ejecutar_cambio(pool)
     instancia_conexion.cerrar_conexion(cursor, pool)
+    
     response = create_jwt.get("/proveedores")
 
     data_html = response.data.decode("utf-8")

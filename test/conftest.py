@@ -1,23 +1,39 @@
 import os
 import pytest
+import shutil
 from dotenv import load_dotenv
 from create_app import crear_app
 from testcontainers.postgres import PostgresContainer
 from model_db.class_singlen import instancia_conexion
 load_dotenv()
+
 postgres = PostgresContainer("postgres:17-alpine")
 base = os.path.dirname(os.path.abspath(__file__))
 sql_ruta = os.path.join(base, "..", "cromasdb.sql")
+folder_ruta = os.path.join(base, "..", "base_test_images")
 
 @pytest.fixture()
 def app_test():
     app_test = crear_app("testing")
     app_test.config.update({ 
         "TEST": True,
-        "SECRET_KEY": os.getenv("SECRET_KEY")
+        "SECRET_KEY": os.getenv("SECRET_KEY"),
+        "UPLOAD_FOLDER": folder_ruta
     })
 
     yield app_test
+
+@pytest.fixture(scope="session", autouse=True)
+def test_folder():
+    sub_folder_product = os.path.join(folder_ruta, "productos")
+    # Create the folder images test
+    os.mkdir(folder_ruta)
+    os.mkdir(sub_folder_product)
+
+    yield
+
+    # delete the folder
+    shutil.rmtree(folder_ruta)
 
 @pytest.fixture(scope="session", autouse=True)
 def postgres_db_test():

@@ -42,9 +42,7 @@ def registrar_entrada(datos_usuario):
     motivo = "Entrada de producto"
     producto = request.form['producto']
     cantidad = request.form['cantidad_entrada']
-    prueba = request.form['valor_id']
-    print("debo estar aqui!")
-    print(prueba)
+   
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     productos, parametro = productor.obtener_cantidad(producto)
     existencia = instancia_conexion.uno(cursor, productos, parametro)
@@ -68,7 +66,6 @@ def registrar_entrada(datos_usuario):
 @movimiento_route.route('/registrar_entrada_no_existente', methods=["POST"])
 @validation_jwt
 def registrar_entrada_no_existente(datos_usuario):
-    # SEPARAR LOS DOS FORMULARIOS, IDEA: PARA LOS PRODUCTOS QUE NO EXISTEN AUN, DEBERIA PRIMERO CREARLOS Y DESPUES LISTARLOS HACER UN IF QUE VEA SI ESE PRODUCTO EXISTE EN ESA LISTA Y CREAR LA ENTRADA
     tipo_movimiento = 1
     motivo = "Entrada de nuevo producto"
     nombre = request.form['nombre']
