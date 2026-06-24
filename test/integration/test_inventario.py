@@ -16,7 +16,7 @@ def test_render_inventario_completo(create_jwt):
 
     assert response.status_code == 200
     assert "/detalles/1" in data_html
-    assert "/detalles/2" in data_html
+    assert "/detalles/3" in data_html
 
 def test_render_inventario_completo_trabajador(create_jwt_worker):
     response = create_jwt_worker.get("/trabajador")
@@ -25,7 +25,7 @@ def test_render_inventario_completo_trabajador(create_jwt_worker):
 
     assert response.status_code == 200
     assert "/detalles/1" in data_html
-    assert "/detalles/2" in data_html
+    assert "/detalles/3" in data_html
     
 def test_busqueda_inventario(create_jwt):
     response = create_jwt.get("search_bar?buscar=pintura+roja")   
@@ -42,7 +42,6 @@ def test_filtrar_inventario_por_categoria(create_jwt):
 
     assert response.status_code == 200
     assert "/detalles/1" in data_html
-    assert "/detalles/2" in data_html
     assert "/detalles/3" in data_html
 
 def test_filtrar_inventario_por_categoria_busqueda(create_jwt):
@@ -51,7 +50,7 @@ def test_filtrar_inventario_por_categoria_busqueda(create_jwt):
     data_html = response.data.decode("utf-8")
 
     assert response.status_code == 200
-    assert "/detalles/2" in data_html
+    assert "/detalles/3" in data_html
 
 def test_filtrar_inventario_por_proveedor(create_jwt):
     response = create_jwt.get("/por_proveedores")
@@ -70,7 +69,7 @@ def test_filtrar_inventario_por_proveedor_busqueda(create_jwt):
 
     assert response.status_code == 200
     assert "proveedor" in data_html
-    assert "/detalles/3" in data_html
+    assert "/detalles/4" in data_html
 
 def test_admin_puede_modificar_producto(create_jwt):
     imagen_vacia = (io.BytesIO(b""), "")

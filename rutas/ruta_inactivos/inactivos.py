@@ -150,8 +150,8 @@ def reintegrar_perfil(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuarios.obtener_uno(id)
-    perfiles = instancia_conexion.uno(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.obtener_uno(id)
+    perfiles = instancia_conexion.uno(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']
@@ -163,8 +163,8 @@ def reintegrar_perfil(datos_usuario, id):
 @validation_acces
 def recuperar_perfil(datos_usuario, id):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
-    usuarios, parametro = usuarios.recuperar_usuario(id)
-    instancia_conexion.registrar(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.recuperar_usuario(id)
+    instancia_conexion.registrar(cursor, usuario, parametro)
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
 
@@ -184,8 +184,8 @@ def busqueda_perfil_inactivo(datos_usuario):
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     minimo_cantidad = productor.listar_minimo_cantidad()
     alerta = instancia_conexion.todos(cursor, minimo_cantidad)
-    usuarios, parametro = usuarios.busqueda_usuario_inactivo(filtro)
-    perfiles = instancia_conexion.todos_parametros(cursor, usuarios, parametro)
+    usuario, parametro = usuarios.busqueda_usuario_inactivo(filtro)
+    perfiles = instancia_conexion.todos_parametros(cursor, usuario, parametro)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     imagen_usuario = datos_usuario['imagen_usuario']  
     name = datos_usuario['usuario_nombre']

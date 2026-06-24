@@ -27,7 +27,7 @@ class Producto(object):
 
     def eliminar_producto(self, id):
         query = "UPDATE producto SET borrado=%s WHERE id_producto = %s"
-        parametros = ( "TRUE", id)        
+        parametros = ("TRUE", id)        
         return query, parametros
     
     def recuperar_producto(self, id):

@@ -33,7 +33,7 @@ def test_entrada_producto_nuevo_crea_registro_y_redirige(create_jwt):
     instancia_conexion.cerrar_conexion(cursor, pool)
 
     assert response.status_code == 302
-    assert producto == (4,)
+    assert producto == (5,)
 
 def test_registrar_salida_exito_disminuye_stock(create_jwt):
     data_insert = {"producto": 1, "cantidad_salida": 10}

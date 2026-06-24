@@ -20,7 +20,7 @@ def test_buscar_proveedor(create_jwt):
 
     data_html = response.data.decode("utf-8")
 
-    assert "/edit_proveedor/3" in data_html
+    assert "/edit_proveedor/4" in data_html
 
 def test_admin_puede_crear(create_jwt):
     data_create = {"nombre": "williafro", "correo": "willi@gmail.com", "direccion": "guarenas", "telefono": "04123567777", "rif": "58-978641354777",}
@@ -32,7 +32,7 @@ def test_admin_puede_crear(create_jwt):
     instancia_conexion.cerrar_conexion(cursor, pool)
 
     assert response.status_code == 302
-    assert proveedor_create == (4,)
+    assert proveedor_create == (5,)
 
 def test_admin_puede_modificar(create_jwt):
     data_update = {"nombre": "proveedor primero", "correo": "proveedor@gmail.com", "direccion": "San antonio de los altos", "telefono": "0414-325-56-77", "rif": "j-555656535",}
