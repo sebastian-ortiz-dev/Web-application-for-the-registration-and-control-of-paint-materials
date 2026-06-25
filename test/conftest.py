@@ -26,9 +26,11 @@ def app_test():
 @pytest.fixture(scope="session", autouse=True)
 def test_folder():
     sub_folder_product = os.path.join(folder_ruta, "productos")
+    sub_folder_perfil = os.path.join(folder_ruta, "perfil")
     # Create the folder images test
     os.mkdir(folder_ruta)
     os.mkdir(sub_folder_product)
+    os.mkdir(sub_folder_perfil)
 
     yield
 

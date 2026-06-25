@@ -86,7 +86,7 @@ def crear_usuario(datos_usuario):
     acceso = request.form['acceso']
     filename = None
     subcarpeta = 'perfil'
-    verification = True
+  
     if acceso == " ":
         flash("Eliga un perfil para el nuevo usuario")
         return redirect(url_for('usuario.usuario_nuevo'))
@@ -95,10 +95,8 @@ def crear_usuario(datos_usuario):
         flash('¡Error! Las claves no coinciden') 
         return redirect(url_for('usuario.usuario_nuevo'))
     
-    if imagen:
-        verification = image_verification(imagen.read())
 
-    if not verification:
+    if not image_verification(imagen):
         flash('Formato de imagen no permitido')
         return redirect(url_for('usuario.usuario_nuevo'))
 
@@ -120,6 +118,7 @@ def crear_usuario(datos_usuario):
         print(f"Error: {e}")
         flash("Error: El nombre de usuario ya existe")
         return redirect(url_for("usuario.usuario_nuevo"))
+    
     resultado = instancia_conexion.ejecutar_cambio(pool_db)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     if resultado:
@@ -158,16 +157,13 @@ def cambios_usuario(datos_usuario, id):
     acceso = request.form['acceso']
     filename = None
     subcarpeta = 'perfil'
-    verification = True
+   
 
     if contraseña != confirmar:
         flash('¡Error! Las contraseñas no coinciden')
         return redirect(url_for('usuario.editar_usuario', id=id))
-    
-    if imagen:
-        verification = image_verification(imagen.read())
 
-    if not verification:
+    if not image_verification(imagen):
         flash('Formato de imagen no permitido')
         return redirect(url_for('usuario.editar_usuario', id=id))
 
