@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from create_app import crear_app
 from testcontainers.postgres import PostgresContainer
 from model_db.class_singlen import instancia_conexion
+from flask import abort
 load_dotenv()
 
 postgres = PostgresContainer("postgres:17-alpine")
@@ -18,7 +19,8 @@ def app_test():
     app_test.config.update({ 
         "TEST": True,
         "SECRET_KEY": os.getenv("SECRET_KEY"),
-        "UPLOAD_FOLDER": folder_ruta
+        "UPLOAD_FOLDER": folder_ruta,
+        "DEBUG": False,
     })
 
     yield app_test
@@ -27,15 +29,18 @@ def app_test():
 def test_folder():
     sub_folder_product = os.path.join(folder_ruta, "productos")
     sub_folder_perfil = os.path.join(folder_ruta, "perfil")
+    folder_report = os.path.join(base, "..", "reportes_test")
     # Create the folder images test
     os.mkdir(folder_ruta)
     os.mkdir(sub_folder_product)
     os.mkdir(sub_folder_perfil)
+    os.mkdir(folder_report)
 
     yield
 
     # delete the folder
     shutil.rmtree(folder_ruta)
+    shutil.rmtree(folder_report)
 
 @pytest.fixture(scope="session", autouse=True)
 def postgres_db_test():
@@ -84,3 +89,8 @@ def create_jwt_worker(client):
     })
 
     return client
+
+@pytest.fixture()
+def create_error_500():
+    raise RuntimeError("crear error")
+

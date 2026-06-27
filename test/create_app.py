@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, abort
 from rutas.ruta_login.login import login_route
 from rutas.ruta_inventario.inventario import inventario_route
 from rutas.ruta_proveedor.proveedores import proveedor_route
@@ -22,6 +22,10 @@ def crear_app(config_name="development"):
 
     if config_name == "testing":
         app.config.update({"TESTING": True})
+
+    @app.route("/error-forzado")
+    def error():
+        abort(500)
 
     app.register_blueprint(login_route)
     app.register_blueprint(handler_error_route)

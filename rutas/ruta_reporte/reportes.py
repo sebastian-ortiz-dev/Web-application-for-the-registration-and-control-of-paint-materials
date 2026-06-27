@@ -40,7 +40,6 @@ def reporte_diario(datos_usuario):
     hora_exacta = hora.strftime("%H:%M:%S")
     texto, parametro = usuarios.obtener_nombre(datos_usuario['sub'])
     perfiles = instancia_conexion.uno(cursor, texto, parametro)
-    print(perfiles)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("/components/formato_reporte_diario.html")  
