@@ -1,6 +1,6 @@
 from flask import redirect, url_for, request, flash
-from middleware.refresh import refresh_token_validation, refresh_token
-from middleware.decode import data_jwt
+from secure.refresh import refresh_token_validation, refresh_token
+from secure.decode import data_jwt
 from secure.create_cookie import create_cookie_refresh
 import jwt
 

@@ -5,7 +5,11 @@ from dotenv import load_dotenv
 from create_app import crear_app
 from testcontainers.postgres import PostgresContainer
 from model_db.class_singlen import instancia_conexion
-from flask import abort
+from secure.create_cookie import create_cookie_refresh
+import jwt
+import time
+import math
+import uuid
 load_dotenv()
 
 postgres = PostgresContainer("postgres:17-alpine")
@@ -91,6 +95,7 @@ def create_jwt_worker(client):
     return client
 
 @pytest.fixture()
-def create_error_500():
-    raise RuntimeError("crear error")
-
+def create_jwt_expirate(client):
+    client.get("/login-jwt")
+    
+    return client

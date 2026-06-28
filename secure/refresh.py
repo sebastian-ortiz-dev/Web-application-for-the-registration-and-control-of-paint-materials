@@ -1,4 +1,4 @@
-from middleware.create_jwt import create_jwt
+from secure.create_jwt import create_jwt
 from model_db.conexion import Conexion
 from model_db.model_class.model_refresh_token import Refresh_token
 from model_db.model_class.model_usuario import Usuario

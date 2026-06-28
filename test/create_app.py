@@ -1,4 +1,4 @@
-from flask import Flask, abort
+from flask import Flask, abort, request
 from rutas.ruta_login.login import login_route
 from rutas.ruta_inventario.inventario import inventario_route
 from rutas.ruta_proveedor.proveedores import proveedor_route
@@ -12,7 +12,12 @@ from rutas.ruta_inactivos.inactivos import inactivos_route
 from rutas.ruta_configuraciones.configuraciones import configuracion_route
 from rutas.ruta_reporte.reportes import reporte_route
 from rutas.ruta_error_handler.error_handler import handler_error_route
+from secure.create_cookie import create_cookie_refresh
 import os
+import jwt
+import time
+import math
+import uuid
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 template_route = os.path.join(base_dir, "..", "templates")
@@ -26,6 +31,16 @@ def crear_app(config_name="development"):
     @app.route("/error-forzado")
     def error():
         abort(500)
+
+    @app.route("/login-jwt")
+    def jwt_expirete():
+        credentials = ["admin", "usuario_defecto.png", "Admin"]
+        encode = jwt.encode({ "iss": "pintuplomer", "sub": f"{1}", "usuario_nombre": credentials[0], "imagen_usuario": credentials[1], "nivel_acceso": credentials[2], "iat": math.floor(time.time()), "exp": math.floor(time.time()) }, key=os.getenv("KEY"), algorithm="HS256")
+        return create_cookie_refresh("/principal", encode, str(uuid.uuid4()))
+
+    @app.route("/refreh")
+    def get_refresh():
+        return request.cookies.get("refresh")
 
     app.register_blueprint(login_route)
     app.register_blueprint(handler_error_route)

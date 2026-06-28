@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from dotenv import load_dotenv
-from middleware.refresh import *
-from middleware.create_jwt import *
-from middleware.refresh import refresh_login
+from secure.refresh import *
+from secure.create_jwt import *
+from secure.refresh import refresh_login
 from secure.create_cookie import *
 from secure.delete_cookie import delete_cookie
 from datetime import date
