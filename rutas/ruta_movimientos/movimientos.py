@@ -38,9 +38,9 @@ def movimiento(datos_usuario):
 @movimiento_route.route('/registrar_entrada_existente', methods=["POST"])
 @validation_jwt
 def registrar_entrada(datos_usuario):
+    producto = request.form['valor_id']
     tipo_movimiento = 1
     motivo = "Entrada de producto"
-    producto = request.form['producto']
     cantidad = request.form['cantidad_entrada']
    
     pool_db, cursor = instancia_conexion.iniciar_conexion()
@@ -65,7 +65,7 @@ def registrar_entrada(datos_usuario):
 # Ruta que registra una entrada en la DB de un producto que no existe     
 @movimiento_route.route('/registrar_entrada_no_existente', methods=["POST"])
 @validation_jwt
-def registrar_entrada_no_existente(datos_usuario):
+def registrar_entrada_no_existente_process(datos_usuario):
     tipo_movimiento = 1
     motivo = "Entrada de nuevo producto"
     nombre = request.form['nombre']
@@ -83,7 +83,7 @@ def registrar_entrada_no_existente(datos_usuario):
     if distribuidor == "" or categoria == "" or medida == "":
         flash('¡Error! Complete todos los campos')
         return redirect(url_for('movimiento.movimiento'))
-
+    
     if not image_verification(imagen):
         flash('Formato de imagen no permitido')
         return redirect(url_for('movimiento.movimiento'))
@@ -91,6 +91,9 @@ def registrar_entrada_no_existente(datos_usuario):
     if imagen and allowed_file(imagen.filename):
         filename = secure_filename(imagen.filename)
         imagen.save(os.path.join(current_app.config['UPLOAD_FOLDER'], subcarpeta, filename))
+    else:
+        flash('¡Error! ocurrio un error al tratar de cargar la imagen')
+        return redirect(url_for('movimiento.movimiento'))
 
     archivo = generate_name_unique(filename)
     os.rename(os.path.join(current_app.config['UPLOAD_FOLDER'], subcarpeta, filename), os.path.join(current_app.config['UPLOAD_FOLDER'], subcarpeta, archivo))
@@ -116,7 +119,7 @@ def registrar_entrada_no_existente(datos_usuario):
 @movimiento_route.route('/registrar_salida', methods=["POST"])
 @validation_jwt
 def registrar_salida(datos_usuario):
-    producto = request.form['producto']
+    producto = request.form['2valor_id']
     motivo = "Entrega de producto"
     cantidad = request.form['cantidad_salida']
     tipo_movimiento = 2
@@ -154,12 +157,12 @@ def registrar_salida(datos_usuario):
 @movimiento_route.route("/registrar_devolucion", methods=["POST"])
 @validation_jwt
 def registrar_devolucion(datos_usuario):
-    producto = request.form['producto']
+    producto = request.form['3valor_id']
     motivo = request.form['motivo']
     cantidad = request.form['cantidad_devolucion']
     tipo_movimiento = 3
     tipo_devolucion = request.form['tipo']
-    
+
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     productos, parametro = productor.obtener_cantidad(producto)
     cantidad_existencia = instancia_conexion.uno(cursor, productos, parametro)
@@ -195,10 +198,11 @@ def registrar_devolucion(datos_usuario):
 @movimiento_route.route("/registrar_Ajuste", methods=["POST"])
 @validation_jwt
 def registrar_Ajuste(datos_usuario):
-    producto = request.form['producto']
+    producto = request.form['4valor_id']
     cantidad = request.form['cantidad_ajuste']
     tipo_movimiento = 4
     tipo_devolucion = request.form['tipo']
+    
     
     pool_db, cursor = instancia_conexion.iniciar_conexion()
     productos, parametro = productor.obtener_cantidad(producto)

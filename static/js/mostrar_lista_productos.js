@@ -1,11 +1,14 @@
 function mostrar_lista(){
-    let lista = document.getElementById("lista");
-    
+    let lista = document.querySelectorAll("[name=lista]");
     event.stopPropagation();
-    lista.style.display = "block";
+    lista.forEach((objeto) => {
+        objeto.style.display = "block";
+    });
 }
 
 function ocultar_lista(){
-    let lista = document.getElementById("lista");
-    lista.style.display = "none";
+    let lista = document.querySelectorAll("[name=lista]");
+    lista.forEach((objeto) => {
+        objeto.style.display = "none";
+    });
 }

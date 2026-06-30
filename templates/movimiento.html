@@ -11,7 +11,7 @@
     
   {% include 'components/navegacion_if.html' %}
 
-     <div class="w-full ml-96 p-4">
+  <div class="w-full ml-96 p-4">
       <div class="flex items-center space-x-2 mb-4 justify-end">
         <p class="text-xl font-bold">{{ nombre }}</p>
         <img src="{{ url_for('static', filename='img/perfil/' + imagen) }}" class="w-17 rounded-full">
@@ -34,15 +34,17 @@
           <select class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm cursor-pointer" id="movimiento" name="movimiento" onchange="cambio()">
             <option value="">-- Elige una opción --</option>
             {% for movimientos in movimiento %}
-              <option value="{{ movimientos[0] }}">{{ movimientos[1] }}</option>
+              <option value="{{ movimientos[0] }}-formulario">{{ movimientos[1] }}</option>
             {% endfor %}
             </select> <br> <br>
         {% endif %}
     </div>
 
+    <p id="json" style="display: none;">{{ productos_json }}</p>
+
     <div class="my-5"> 
-      <div id="1" class="formulario-movimiento" style="display: none;">
-        <div class="bg-white mx-[270px] border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl"> 
+      <div id="1-formulario" class="formulario-movimiento" style="display: none;">
+        <div class="bg-white mx-[25%] border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl"> 
           <h2 class="text-center mb-3 text-2xl text-slate-800">Entrada de Productos</h2>
           <label for="producto_entrada" class="text-xl font-medium text-gray-700 ">Tipo de Producto:</label>
           <select id="tipo" name="tipo" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mb-1 cursor-pointer" onchange="formu()"> 
@@ -52,20 +54,13 @@
           </select> <br>
           <div style="display: none;" id="existente_producto">
             <form action="{{url_for('movimiento.registrar_entrada')}}" method="POST"  enctype="multipart/form-data">
-              <label for="producto" class="text-xl font-medium text-gray-700" >Producto:</label>
-              <select id="producto" name="producto" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm" > 
-                <option value="">-- Elige un producto --</option>
-                {% for producto in productos %}
-                  <option value="{{ producto[0] }}">ID:{{ producto[0] }}. {{ producto[1] }}</option>
-                {% endfor %}
-              </select> <br>
               <label for="cabezero" class="text-xl font-medium text-gray-700">Producto:</label>
               <div class="relative">
-                <input type="text" id="cabezero" name="cabezero" placeholder="nombre del producto" class="flex cursor-pointer border border-gray-300 p-1 rounded-sm w-50" autocomplete="off" onclick="mostrar_lista()" oninput="llamada()">
-                <div id="lista" name="lista" class="absolute max-h-34 max-w-65 top-full border border-gray-300 bg-white z-50 mt-1 rounded-sm text-gray-700 overflow-y-auto overflow-x-hidden">
+                <input type="text" id="cabezero" name="cabezero" placeholder="nombre del producto" class="flex cursor-pointer border border-gray-300 p-1 rounded-sm w-70" autocomplete="off" onclick="mostrar_lista()" oninput="llamada(1)">
+                <div id="lista" name="lista" class="absolute max-h-34 max-w-80 top-full border border-gray-300 bg-white z-50 mt-1 rounded-sm text-gray-700 overflow-y-auto overflow-x-hidden" style="display: block;">
                   {% for producto in productos %}
-                    <div id="{{ producto[0] }}" class="cursor-pointer hover:bg-gray-300 text-lg transation-all duration-400 flex" onclick="ponerTexto('{{ producto[0] }}')">
-                      <p class="mx-1">ID: {{ producto[0]}} </p>
+                    <div id="{{ producto[0] }}" class="cursor-pointer hover:bg-gray-300 text-lg transation-all duration-400 flex w-70" onclick="ponerTexto('{{ producto[0] }}', 1)">
+                      ID:<p class="mx-1"> {{ producto[0]}} </p>
                       <p name="prueba" data-value="{{ producto[0] }}">{{ producto[1] }}</p>
                     </div>
                   {% endfor %}
@@ -74,7 +69,6 @@
                   </div>
                 </div>
               </div> 
-              <p id="json" name="json" style="display: none;">{{ productos_json }}</p>
               <label for="cantidad_entrada" class="text-xl font-medium text-gray-700 ">Cantidad:</label> <br>
               <input type="number" id="cantidad_entrada" name="cantidad_entrada" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm " required> <br> 
               <input type="number" id="valor_id" name="valor_id" value="" style="display: none;">
@@ -82,7 +76,7 @@
             </form>
           </div>
           <div style="display: none;" id="nuevo_producto">
-            <form action="{{url_for('movimiento.registrar_entrada_no_existente') }}" method="POST"  enctype="multipart/form-data">
+            <form action="{{url_for('movimiento.registrar_entrada_no_existente_process') }}" method="POST"  enctype="multipart/form-data">
               <label for="imagen" class="font-medium text-gray-700 text-xl">Imagen:</label> <br>
               <input type="file" name="imagen" id="imagen" required/> <br>
               <label for="nombre" class="text-xl font-medium text-gray-700 ">Nombre del producto:</label> <br>
@@ -124,32 +118,50 @@
         </div>
       </div>
             
-      <div id="2" class="formulario-movimiento" style="display: none;">
-        <form action="{{url_for('movimiento.registrar_salida') }}" method="POST" class="bg-white mx-[270px] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
+      <div id="2-formulario" class="formulario-movimiento" style="display: none;">
+        <form action="{{url_for('movimiento.registrar_salida') }}" method="POST" class="bg-white mx-[25%] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
           <h2 class="text-center mb-3 text-2xl text-slate-800">Salida de Productos</h2>
-          <label for="producto" class="text-xl font-medium text-gray-700 ">Producto:</label>
-          <select id="producto" name="producto" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm ">
-            <option value="">-- Elige un producto --</option>
-            {% for producto in productos %}
-              <option value="{{ producto[0] }}">ID:{{ producto[0] }}. {{ producto[1] }}</option>
-            {% endfor %}
-          </select> <br>
+          <label for="cabezero" class="text-xl font-medium text-gray-700">Producto:</label>
+          <div class="relative">
+            <input type="text" id="cabezero-2" name="cabezero" placeholder="nombre del producto" class="flex cursor-pointer border border-gray-300 p-1 rounded-sm w-70" autocomplete="off" onclick="mostrar_lista()" oninput="llamada(2)">
+            <div id="lista-2" name="lista" class="absolute max-h-34 max-w-65 top-full border border-gray-300 bg-white z-50 mt-1 rounded-sm text-gray-700 overflow-y-auto overflow-x-hidden" style="display: block;">
+              {% for producto in productos %}
+                <div id="2{{ producto[0] }}" class="cursor-pointer hover:bg-gray-300 text-lg transation-all duration-400 flex w-70" onclick="ponerTexto('2{{ producto[0] }}', 2)">
+                  ID:<p class="mx-1"> {{ producto[0]}} </p>
+                  <p name="prueba" data-value="{{ producto[0] }}">{{ producto[1] }}</p>
+                </div>
+              {% endfor %}
+              <div id="2no_found" class="justify-center text-lg w-50 hidden">
+                  <p class="mx-1">No matches found</p>
+              </div>
+            </div>
+          </div> <br>
+          <input type="number" id="2valor_id" name="2valor_id" value="" style="display: none;">
           <label for="cantidad_salida" class="text-xl font-medium text-gray-700 ">Cantidad:</label> <br>
           <input type="number" id="cantidad_salida" name="cantidad_salida" class="pl-2 my-2 bg-slate-100 rounded-sm w-55 " required> <br> 
           <button type="submit" class="bg-red-500 p-1.5 rounded-xl cursor-pointer text-white hover:bg-red-600 mb-2">Registrar Salida</button> 
         </form>
       </div>
 
-      <div id="3" class="formulario-movimiento" style="display: none;">
-        <form action="{{url_for('movimiento.registrar_devolucion') }}" method="POST" class="bg-white mx-[270px] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
+      <div id="3-formulario" class="formulario-movimiento" style="display: none;">
+        <form action="{{url_for('movimiento.registrar_devolucion') }}" method="POST" class="bg-white mx-[25%] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
           <h2 class="text-center mb-3 text-2xl text-slate-800">Devolucion de Producto</h2>
-          <label for="producto" class="text-xl font-medium text-gray-700 ">Producto:</label>
-          <select id="producto" name="producto" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm">
-            <option value="">-- Elige un producto --</option>
-            {% for producto in productos %}
-              <option value="{{ producto[0] }}">ID:{{ producto[0] }}. {{ producto[1] }}</option>
-            {% endfor %}
-          </select> <br>
+          <label for="cabezero" class="text-xl font-medium text-gray-700">Producto:</label>
+          <div class="relative">
+            <input type="text" id="cabezero-3" name="cabezero" placeholder="nombre del producto" class="flex cursor-pointer border border-gray-300 p-1 rounded-sm w-70" autocomplete="off" onclick="mostrar_lista()" oninput="llamada(3)">
+            <div id="lista-3" name="lista" class="absolute max-h-34 max-w-65 top-full border border-gray-300 bg-white z-50 mt-1 rounded-sm text-gray-700 overflow-y-auto overflow-x-hidden" style="display: block;">
+              {% for producto in productos %}
+                <div id="3{{ producto[0] }}" class="cursor-pointer hover:bg-gray-300 text-lg transation-all duration-400 flex w-70" onclick="ponerTexto('3{{ producto[0] }}', 3)">
+                  ID:<p class="mx-1"> {{ producto[0]}} </p>
+                  <p name="prueba" data-value="{{ producto[0] }}">{{ producto[1] }}</p>
+                </div>
+              {% endfor %}
+              <div id="3no_found" class="justify-center text-lg w-50 hidden">
+                  <p class="mx-1">No matches found</p>
+              </div>
+            </div>
+          </div> <br>
+          <input type="number" id="3valor_id" name="3valor_id" value="" style="display: none;">
           <label for="tipo" class="text-xl font-medium text-gray-700 ">Tipo de Devolucion:</label>
           <select id="tipo" name="tipo" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mb-1"> 
             <option value="">-- Elige una opción --</option>
@@ -164,16 +176,25 @@
         </form>
       </div>
 
-      <div id="4" class="formulario-movimiento" style="display: none;">
-        <form action="{{url_for('movimiento.registrar_Ajuste') }}" method="POST" class="bg-white mx-[270px] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
+      <div id="4-formulario" class="formulario-movimiento" style="display: none;">
+        <form action="{{url_for('movimiento.registrar_Ajuste') }}" method="POST" class="bg-white mx-[25%] mt-5 border-gray-300 shadow-md m-auto px-5 py-2 rounded-xl">
           <h2 class="text-center mb-3 text-2xl text-slate-800">Ajuste de Producto</h2>
-          <label for="producto" class="text-xl font-medium text-gray-700 ">Producto:</label>
-          <select id="producto" name="producto" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm ">
-            <option value="">-- Elige una opción --</option>
-            {% for producto in productos %}
-              <option value="{{ producto[0] }}">ID:{{ producto[0] }}. {{ producto[1] }}</option>
-            {% endfor %}
-          </select> <br>
+          <label for="cabezero" class="text-xl font-medium text-gray-700">Producto:</label>
+          <div class="relative">
+            <input type="text" id="cabezero-4" name="cabezero" placeholder="nombre del producto" class="flex cursor-pointer border border-gray-300 p-1 rounded-sm w-70" autocomplete="off" onclick="mostrar_lista()" oninput="llamada(4)">
+            <div id="lista-4" name="lista" class="absolute max-h-34 max-w-65 top-full border border-gray-300 bg-white z-50 mt-1 rounded-sm text-gray-700 overflow-y-auto overflow-x-hidden" style="display: block;">
+              {% for producto in productos %}
+                <div id="4{{ producto[0] }}" class="cursor-pointer hover:bg-gray-300 text-lg transation-all duration-400 flex w-70" onclick="ponerTexto('4{{ producto[0] }}', 4)">
+                  ID:<p class="mx-1"> {{ producto[0]}} </p>
+                  <p name="prueba" data-value="{{ producto[0] }}">{{ producto[1] }}</p>
+                </div>
+              {% endfor %}
+              <div id="4no_found" class="justify-center text-lg w-50 hidden">
+                  <p class="mx-1">No matches found</p>
+              </div>
+            </div>
+          </div> <br>
+          <input type="number" id="4valor_id" name="4valor_id" value="" style="display: none;">
           <label for="tipo" class="text-xl font-medium text-gray-700 ">Tipo de Ajuste:</label>
           <select id="tipo" name="tipo" class="pl-2 my-2 ml-1 bg-slate-100 rounded-sm mb-1"> 
             <option value="">-- Elige una opción --</option>

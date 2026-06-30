@@ -275,6 +275,9 @@
   .mx-40 {
     margin-inline: calc(var(--spacing) * 40);
   }
+  .mx-\[25\%\] {
+    margin-inline: 25%;
+  }
   .mx-\[40\%\] {
     margin-inline: 40%;
   }
@@ -455,12 +458,6 @@
   .ml-\[48\%\] {
     margin-left: 48%;
   }
-  .ml-\[50\%\] {
-    margin-left: 50%;
-  }
-  .ml-\[50\] {
-    margin-left: 50;
-  }
   .ml-\[200px\] {
     margin-left: 200px;
   }
@@ -475,9 +472,6 @@
   }
   .ml-\[420px\] {
     margin-left: 420px;
-  }
-  .ml-\[510px\] {
-    margin-left: 510px;
   }
   .ml-\[530px\] {
     margin-left: 530px;
@@ -593,6 +587,9 @@
   .w-50 {
     width: calc(var(--spacing) * 50);
   }
+  .w-52 {
+    width: calc(var(--spacing) * 52);
+  }
   .w-53 {
     width: calc(var(--spacing) * 53);
   }
@@ -604,6 +601,12 @@
   }
   .w-70 {
     width: calc(var(--spacing) * 70);
+  }
+  .w-80 {
+    width: calc(var(--spacing) * 80);
+  }
+  .w-82 {
+    width: calc(var(--spacing) * 82);
   }
   .w-\[230px\] {
     width: 230px;
@@ -619,6 +622,9 @@
   }
   .max-w-65 {
     max-width: calc(var(--spacing) * 65);
+  }
+  .max-w-80 {
+    max-width: calc(var(--spacing) * 80);
   }
   .max-w-sm {
     max-width: var(--container-sm);
