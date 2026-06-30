@@ -10,6 +10,8 @@ test.py
 ./backup_reportes/*
 ./reportes/*
 practice.py
+filtro.js
+practica.py
 
 __pycache__/
 .pyc

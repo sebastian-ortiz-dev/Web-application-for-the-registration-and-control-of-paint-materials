@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from dotenv import load_dotenv
-from middleware.refresh import *
-from middleware.create_jwt import *
-from middleware.refresh import refresh_login
+from secure.refresh import *
+from secure.create_jwt import *
+from secure.refresh import refresh_login
 from secure.create_cookie import *
 from secure.delete_cookie import delete_cookie
 from datetime import date
@@ -19,7 +19,11 @@ def login():
         nombre = request.form['usuario']
         clave = request.form['clave']
 
-        pool_db, cursor = instancia_conexion.iniciar_conexion()
+        try:
+            pool_db, cursor = instancia_conexion.iniciar_conexion()
+        except Exception as e:
+            print(f"Problem with the service: {e}")
+            abort(500)
         texto, parametros = usuarios.login(nombre)
         recuperado = instancia_conexion.uno(cursor, texto, parametros)
 

@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template
 from middleware.auth import validation_jwt
 from model_db.class_singlen import productor, historial, proveedor, usuarios, instancia_conexion
-from secure.sin_movimientos import dia
-from secure.sin_movimientos import sin_movimiento
+from utils.obtener_fecha import dia
+from utils.sin_movimientos import sin_movimiento
 
 
 # Rutas relacionadas a la vista general de la aplicacion web

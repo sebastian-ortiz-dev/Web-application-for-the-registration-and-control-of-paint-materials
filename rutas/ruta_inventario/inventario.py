@@ -6,8 +6,8 @@ from werkzeug.utils import secure_filename
 from datetime import date
 import os
 from secure.file_secure import allowed_file
-from secure.obtener_proveedores import get_producto_id
-from secure.sin_movimientos import limpiar
+from utils.obtener_proveedores import get_producto_id
+from utils.sin_movimientos import limpiar
 from model_db.class_singlen import productor, proveedor, category, medida, listado, instancia_conexion
 
 # Rutas relacionadas al inventario de la aplicacion web

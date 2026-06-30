@@ -2,13 +2,12 @@ function cambio(){
     let tamanio = document.getElementsByClassName('formulario-movimiento')
 
     for(i = 1; i<=tamanio.length ; i++){
-        formularios = document.getElementById(i);
+        formularios = document.getElementById(i + "-formulario");
         formularios.style.display = 'none';
     }
-
+    
     let eleccion = document.getElementById('movimiento');
     let valor = eleccion.value;
-
     if(valor != ""){
         formulario = document.getElementById(valor);
         formulario.style.display = 'block';

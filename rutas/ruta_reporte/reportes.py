@@ -3,7 +3,7 @@ from middleware.auth import validation_jwt
 from datetime import date, datetime
 from model_db.class_singlen import productor, historial, usuarios, instancia_conexion
 from jinja2 import Environment, FileSystemLoader
-from secure.generar_reporte import *
+from services.generar_reporte import *
 # Rutas relacionadas con los reportes
 reporte_route = Blueprint('reporte', __name__, template_folder='templates')
 
@@ -40,7 +40,6 @@ def reporte_diario(datos_usuario):
     hora_exacta = hora.strftime("%H:%M:%S")
     texto, parametro = usuarios.obtener_nombre(datos_usuario['sub'])
     perfiles = instancia_conexion.uno(cursor, texto, parametro)
-    print(perfiles)
     instancia_conexion.cerrar_conexion(cursor, pool_db)
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("/components/formato_reporte_diario.html")  

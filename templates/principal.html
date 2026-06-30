@@ -19,12 +19,12 @@
 
     <div class="flex items-center bg-white h-14 rounded-sm shadow-md">
         <p class="text-xl font-bold pl-2 text-gray-600">Sistema de gestion de materiales de pintura</p>
-        <a href="{{ url_for('reporte.reporte_mensual') }}" class="flex items-center cursor-pointer ml-[200px] bg-blue-300 p-2 rounded-xl hover:bg-blue-500 hover:text-white">Generar reporte del Mes
+        <a href="{{ url_for('reporte.reporte_mensual') }}" class="flex items-center cursor-pointer ml-[200px] bg-blue-300 p-2 rounded-xl hover:bg-blue-500 hover:text-white transation-all duration-500">Generar reporte del Mes
           <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 pt-0.5 pl-0.5" fill="currentColor">
             <path d="M560-320h80v-80h80v-80h-80v-80h-80v80h-80v80h80v80ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/>
           </svg>
         </a>
-        <a href="{{ url_for('reporte.reporte_diario') }}" class="flex items-center cursor-pointer bg-blue-300 p-2 ml-1 rounded-xl hover:bg-blue-500 hover:text-white">Generar reporte del Dia
+        <a href="{{ url_for('reporte.reporte_diario') }}" class="flex items-center cursor-pointer bg-blue-300 p-2 ml-1 rounded-xl hover:bg-blue-500 hover:text-white transation-all duration-500">Generar reporte del Dia
           <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 pt-0.5 pl-0.5" fill="currentColor">
             <path d="M560-320h80v-80h80v-80h-80v-80h-80v80h-80v80h80v80ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/>
           </svg>
@@ -53,7 +53,7 @@
 
     <div class="flex mt-5 justify-between">
       {% if access_level == 'Administrador' %}
-        <a href="{{ url_for('inventario.index') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-blue-300 ">
+        <a href="{{ url_for('inventario.index') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-blue-300 transation-all duration-500">
             <div class="flex">
               <p class="text-blue-400">Productos</p>
               <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-7 h-7 text-blue-400 ml-23"fill="currentColor">
@@ -64,7 +64,7 @@
             <p class="text-gray-500 mt-5">Valor total en invetario</p>
         </div></a>
       {% else %}
-        <a href="{{ url_for('inventario.trabajador') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-blue-300 ">
+        <a href="{{ url_for('inventario.trabajador') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-blue-300 transation-all duration-500">
             <div class="flex">
               <p class="text-blue-400">Productos</p>
               <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-7 h-7 text-blue-400 ml-23"fill="currentColor">
@@ -77,7 +77,7 @@
       {% endif %}
 
       {% if access_level == 'Administrador' %}
-        <a href="{{ url_for('inactivos.inactivos') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-green-300">
+        <a href="{{ url_for('inactivos.inactivos') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-green-300 transation-all duration-500">
             <div class="flex">
               <p class="text-green-400">Inactivos</p>
               <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 text-green-400 ml-25" fill="currentColor">
@@ -89,31 +89,19 @@
         </div></a>
       {% endif %}
 
-      {% if alerta[0][0] <= 5 and alerta[0][0] >= 0%}
-        <a href="{{ url_for('minimo.alerta') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-orange-300">
-            <div class="flex">
-              <p class="text-orange-400">Bajo stock</p>
-              <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 text-orange-400 ml-22" fill="currentColor">
-                <path d="M451.5-591.5Q440-603 440-620t11.5-28.5Q463-660 480-660t28.5 11.5Q520-637 520-620t-11.5 28.5Q497-580 480-580t-28.5-11.5ZM440-720v-200h80v200h-80ZM223.5-103.5Q200-127 200-160t23.5-56.5Q247-240 280-240t56.5 23.5Q360-193 360-160t-23.5 56.5Q313-80 280-80t-56.5-23.5Zm400 0Q600-127 600-160t23.5-56.5Q647-240 680-240t56.5 23.5Q760-193 760-160t-23.5 56.5Q713-80 680-80t-56.5-23.5ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z"/>
-              </svg>
-            </div>
-            <p class="text-2xl mt-5 font-bold">{{ alerta[0][0] }}</p>
-            <p class="text-gray-500 mt-5">Productos bajo stock</p>
-        </div></a>
-      {% elif alerta[0][0] > 5 %}
-        <a href="{{ url_for('minimo.alerta') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-red-400">
-            <div class="flex">
-              <p class="text-red-500">Bajo stock</p>
-              <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 text-red-500 ml-22" fill="currentColor">
-                <path d="M451.5-591.5Q440-603 440-620t11.5-28.5Q463-660 480-660t28.5 11.5Q520-637 520-620t-11.5 28.5Q497-580 480-580t-28.5-11.5ZM440-720v-200h80v200h-80ZM223.5-103.5Q200-127 200-160t23.5-56.5Q247-240 280-240t56.5 23.5Q360-193 360-160t-23.5 56.5Q313-80 280-80t-56.5-23.5Zm400 0Q600-127 600-160t23.5-56.5Q647-240 680-240t56.5 23.5Q760-193 760-160t-23.5 56.5Q713-80 680-80t-56.5-23.5ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z"/>
-              </svg>
-            </div>
-            <p class="text-2xl mt-5 font-bold">{{ alerta[0][0] }}</p>
-            <p class="text-gray-500 mt-5">Productos bajo stock</p>
-        </div></a>
-      {% endif %}
+      <a href="{{ url_for('minimo.alerta') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl {% if alerta[0][0] <= 5 and alerta[0][0] >= 0 %}shadow-orange-300{% elif alerta[0][0] > 5 %}shadow-red-400 {% endif %} transation-all duration-500">
+        <div class="flex">
+          <p class="{% if alerta[0][0] <= 5 and alerta[0][0] >= 0 %}text-orange-400{% elif alerta[0][0] > 5 %}text-red-500 {% endif %}">Bajo stock</p>
+          <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 {% if alerta[0][0] <= 5 and alerta[0][0] >= 0 %}text-orange-400{% elif alerta[0][0] > 5 %}text-red-500 {% endif %} ml-22" fill="currentColor">
+            <path d="M451.5-591.5Q440-603 440-620t11.5-28.5Q463-660 480-660t28.5 11.5Q520-637 520-620t-11.5 28.5Q497-580 480-580t-28.5-11.5ZM440-720v-200h80v200h-80ZM223.5-103.5Q200-127 200-160t23.5-56.5Q247-240 280-240t56.5 23.5Q360-193 360-160t-23.5 56.5Q313-80 280-80t-56.5-23.5Zm400 0Q600-127 600-160t23.5-56.5Q647-240 680-240t56.5 23.5Q760-193 760-160t-23.5 56.5Q713-80 680-80t-56.5-23.5ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z"/>
+          </svg>
+          </div>
+          <p class="text-2xl mt-5 font-bold">{{ alerta[0][0] }}</p>
+          <p class="text-gray-500 mt-5">Productos bajo stock</p>
+      </div></a>
+  
 
-      <a href="{{ url_for('sin_movimiento.no_movimientos') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-amber-300">
+      <a href="{{ url_for('sin_movimiento.no_movimientos') }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-amber-300 transation-all duration-500">
           <div class="flex">
             <p class="text-amber-400">Sin movimiento</p>
             <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 text-amber-400 ml-13" fill="currentColor">
@@ -125,7 +113,7 @@
       </div></a>     
     </div>   
     <div class="flex justify-between">
-      <a href="{{ url_for('historial.historial_movimientos_filtro', categoria=3) }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-green-500">
+      <a href="{{ url_for('historial.historial_movimientos_filtro', categoria=3) }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-green-500 transation-all duration-500">
           <div class="flex">
             <p class="text-green-600">Devoluciones</p>
             <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 text-green-600 ml-18" fill="currentColor">
@@ -137,7 +125,7 @@
           <p class="text-gray-500 mt-1">Bs.{{ devoluciones_bs[0][0] }}</p>
       </div></a>  
 
-      <a href="{{ url_for('historial.historial_movimientos_filtro', categoria=1) }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-blue-500">
+      <a href="{{ url_for('historial.historial_movimientos_filtro', categoria=1) }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-blue-500 transation-all duration-500">
           <div class="flex">
             <p class="text-blue-600">Entradas</p>
             <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 ml-25 text-blue-500" fill="currentColor">
@@ -149,7 +137,7 @@
           <p class="text-gray-500 mt-1">Bs.{{ entradas_bs[0][0] }}</p>
       </div></a>  
     
-      <a href="{{ url_for('historial.historial_movimientos_filtro', categoria=2) }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-red-500">
+      <a href="{{ url_for('historial.historial_movimientos_filtro', categoria=2) }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-red-500 transation-all duration-500">
           <div class="flex">
             <p class="text-red-500">Salidas</p>
             <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 ml-28 text-red-500" fill="currentColor">
@@ -161,7 +149,7 @@
           <p class="text-gray-500 mt-1">Bs.{{ salidas_bs[0][0] }}</p>
       </div></a>  
 
-      <a href="{{ url_for('historial.historial_movimientos_filtro', categoria=4) }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-orange-500">
+      <a href="{{ url_for('historial.historial_movimientos_filtro', categoria=4) }}"><div class="bg-white p-4 px-5 w-[230px] rounded-lg shadow-md m-5 hover:shadow-2xl shadow-orange-500 transation-all duration-500">
           <div class="flex">
             <p class="text-orange-500">Ajustes</p>
             <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6.5 h-6.5 ml-28 text-orange-500" fill="currentColor">

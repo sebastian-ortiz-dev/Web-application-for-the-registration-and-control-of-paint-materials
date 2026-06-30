@@ -23,7 +23,7 @@
           <input type="text" name="buscar" id="buscar" class="ml-2 h-8 w-[460px] bg-gray-100 shadow-sm pl-4 rounded-xl" placeholder="Buscar una entrada">
           <input type="hidden" name="categoria" id="categoria" value="{{ categoria }}"/>
           <button type="submit">
-            <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6 h-6 hover:text-slate-300 mt-0.5 ml-1 cursor-pointer" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6 h-6 hover:text-slate-300 mt-0.5 ml-1 cursor-pointer transation-all duration-500" fill="currentColor">
               <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
             </svg> 
           </button>
@@ -41,7 +41,7 @@
             <label for="hasta" class="ml-3 mt-1">Hasta: </label>
             <input type="date" name="hasta" id="hasta" class="ml-1 h-8 bg-gray-100 shadow-sm pl-4 rounded-xl" placeholder="Hasta">
             <button type="submit">
-              <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6 h-6 mt-0.5 ml-2 hover:text-slate-300 cursor-pointer" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-6 h-6 mt-0.5 ml-2 hover:text-slate-300 cursor-pointer transation-all duration-500" fill="currentColor">
                 <path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/>
               </svg> 
             </button>
@@ -77,7 +77,7 @@
 
     {% if movimiento %}
         {% for movimientos in movimiento %}
-            <div class="bg-white p-3 px-5 rounded-lg shadow-md m-5 hover:shadow-2xl">
+            <div class="bg-white p-3 px-5 rounded-lg shadow-md m-5 hover:shadow-2xl transation-all duration-500">
             <div>
                 <h3 class="text-xl font-semibold mb-1">Motivo: {{ movimientos[5] }}</h3>
                 <p class="text-gray-500 mb-1">ID Del Registro: {{ movimientos[0] }}</p>
@@ -93,10 +93,10 @@
         {% endfor %}
     {% else %} 
         <div class="mt-50"> 
-          <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="ml-[530px]" fill="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 -960 960 960" class="w-14 h-14 ml-[45%]" fill="currentColor">
             <path d="M155-195q-35-35-35-85H40v-440q0-33 23.5-56.5T120-800h560v160h120l120 160v200h-80q0 50-35 85t-85 35q-50 0-85-35t-35-85H360q0 50-35 85t-85 35q-50 0-85-35Zm113.5-56.5Q280-263 280-280t-11.5-28.5Q257-320 240-320t-28.5 11.5Q200-297 200-280t11.5 28.5Q223-240 240-240t28.5-11.5ZM120-360h32q17-18 39-29t49-11q27 0 49 11t39 29h272v-360H120v360Zm628.5 108.5Q760-263 760-280t-11.5-28.5Q737-320 720-320t-28.5 11.5Q680-297 680-280t11.5 28.5Q703-240 720-240t28.5-11.5ZM680-440h170l-90-120h-80v120ZM360-540Z"/>
           </svg> 
-          <h1 class="text-xl  ml-[400px]">No hay movimientos registrados</h1>
+          <h1 class="text-xl ml-[35%]">No hay movimientos registrados</h1>
         </div>
     {% endif %}
   </div>

@@ -12,7 +12,7 @@ class Conexion():
     @classmethod    
     def iniciar_conexion(self):
         try:
-            self.connection_db = ThreadedConnectionPool(1, 15, dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'), port='5432')
+            self.connection_db = ThreadedConnectionPool(1, 15, dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'), password=os.getenv('DB_PASSWORD'), host=os.getenv('DB_HOST'), port=os.getenv('DB_PORT'))
             pool_db = self.connection_db.getconn()
             cursor = pool_db.cursor()
             return pool_db, cursor

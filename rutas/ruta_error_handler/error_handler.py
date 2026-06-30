@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from middleware.auth import *
+from middleware.auth import validation_jwt
 
 handler_error_route = Blueprint('error_handler', __name__, template_folder='templates')
 
