@@ -5,14 +5,45 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
+        
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Setting up the enviroment
+        run: |
+          sudo apt install pip
+          sudo apt update && apt upgrade -y python3-dev
+          mkdir pintuplomer
+          python3 --version
+
       - name: Check out repository code
         uses: actions/checkout@v6
+        with:
+          path: pintuplomer
+
+      - name: installing depences 
+        run: |
+          cd pintuplomer
+          python3 -m venv .venv
+          . .venv/bin/activate
+         
+          python3 -m pip install --upgrade pip
+
+          pip install -r requirements.txt
+          pip install pytest 
+          pip install testcontainers
+
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
+          cd pintuplomer
+          ls -a
+
+      - name: unit test
+        run: |
+          cd pintuplomer
+          PYTHONPATH=.  ./.venv/bin/pytest 
+
       - run: echo "🍏 This job's status is ${{ job.status }}."

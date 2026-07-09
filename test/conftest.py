@@ -5,11 +5,6 @@ from dotenv import load_dotenv
 from create_app import crear_app
 from testcontainers.postgres import PostgresContainer
 from model_db.class_singlen import instancia_conexion
-from secure.create_cookie import create_cookie_refresh
-import jwt
-import time
-import math
-import uuid
 load_dotenv()
 
 postgres = PostgresContainer("postgres:17-alpine")
