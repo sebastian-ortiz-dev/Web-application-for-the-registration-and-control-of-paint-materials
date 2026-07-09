@@ -49,7 +49,7 @@ def postgres_db_test():
     os.environ["DB_PORT"] = str(postgres.get_exposed_port(5432))
     os.environ["DB_USERNAME"] = postgres.username
     os.environ["DB_PASSWORD"] = postgres.password
-    os.environ["DB_NAME"] = postgres_db_test.name
+    os.environ["DB_NAME"] = postgres.dbname
 
     with open(sql_ruta, "r") as file:
         sql = file.read()
