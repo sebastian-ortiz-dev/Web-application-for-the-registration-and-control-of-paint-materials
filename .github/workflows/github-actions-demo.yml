@@ -12,9 +12,9 @@ jobs:
       - name: Setting up the enviroment
         run: |
           sudo apt install pip
-          sudo apt update && apt upgrade -y python3-dev
+          sudo apt update 
+          sudo apt upgrade -y python3-dev
           mkdir pintuplomer
-          python3 --version
 
       - name: Check out repository code
         uses: actions/checkout@v6
