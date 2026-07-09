@@ -43,13 +43,13 @@ def test_folder():
 
 @pytest.fixture(scope="session", autouse=True)
 def postgres_db_test():
-    postgres.start()
+    postgres.start() 
 
     os.environ["DB_HOST"] = postgres.get_container_host_ip()
     os.environ["DB_PORT"] = str(postgres.get_exposed_port(5432))
     os.environ["DB_USERNAME"] = postgres.username
     os.environ["DB_PASSWORD"] = postgres.password
-    os.environ["DB_NAME"] = postgres.dbname
+    os.environ["DB_NAME"] = postgres_db_test.name
 
     with open(sql_ruta, "r") as file:
         sql = file.read()
@@ -62,6 +62,8 @@ def postgres_db_test():
     yield
 
     postgres.stop()
+
+    
 
 @pytest.fixture()
 def client(app_test):
