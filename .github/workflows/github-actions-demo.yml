@@ -39,9 +39,9 @@ jobs:
         run: |
           ls ${{ github.workspace }}
           cd pintuplomer
-          ls -a
-
-      - name: Load enviroment variables
+          ls 
+          
+      - name: unit test
         env: 
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -51,11 +51,6 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           ALLOWED_EXTENSIONS: ${{ secrets.ALLOWED_EXTENSIONS }}
           KEY: ${{ secrets.KEY }}
-
-        run: |
-          echo "Load secrets ...."
-
-      - name: unit test
         run: |
           cd pintuplomer
           PYTHONPATH=.  ./.venv/bin/pytest 
