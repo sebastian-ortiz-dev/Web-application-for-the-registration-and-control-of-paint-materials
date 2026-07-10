@@ -41,6 +41,17 @@ jobs:
           cd pintuplomer
           ls -a
 
+      - name: Load enviroment variables
+        env: 
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          
+        run: |
+          echo "Load secrets ...."
+
       - name: unit test
         run: |
           cd pintuplomer
