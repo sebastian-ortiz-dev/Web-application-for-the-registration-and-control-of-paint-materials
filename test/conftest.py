@@ -18,6 +18,7 @@ def app_test():
     app_test.config.update({ 
         "TEST": True,
         "SECRET_KEY": os.getenv("SECRET_KEY"),
+        "KEY": os.getenv("KEY"),
         "UPLOAD_FOLDER": folder_ruta,
         "DEBUG": False,
     })

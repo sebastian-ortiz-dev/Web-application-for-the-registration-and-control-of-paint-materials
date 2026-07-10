@@ -48,7 +48,10 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
-          
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          ALLOWED_EXTENSIONS: ${{ secrets.ALLOWED_EXTENSIONS }}
+          KEY: ${{ secrets.KEY }}
+
         run: |
           echo "Load secrets ...."
 
