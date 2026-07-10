@@ -18,7 +18,6 @@ def app_test():
     app_test.config.update({ 
         "TEST": True,
         "SECRET_KEY": os.getenv("SECRET_KEY"),
-        "KEY": os.getenv("KEY"),
         "UPLOAD_FOLDER": folder_ruta,
         "DEBUG": False,
     })
@@ -46,6 +45,7 @@ def test_folder():
 def postgres_db_test():
     postgres.start() 
 
+    os.environ["KEY"] = "secret"
     os.environ["DB_HOST"] = postgres.get_container_host_ip()
     os.environ["DB_PORT"] = str(postgres.get_exposed_port(5432))
     os.environ["DB_USER"] = postgres.username
