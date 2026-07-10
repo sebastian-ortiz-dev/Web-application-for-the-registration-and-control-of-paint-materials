@@ -45,7 +45,8 @@ def test_folder():
 def postgres_db_test():
     postgres.start() 
 
-    os.environ["KEY"] = "secret"
+    os.environ["KEY"] = os.getenv("KEY")
+    os.environ["SECRET_KEY"] = os.getenv("SECRET_KEY")
     os.environ["DB_HOST"] = postgres.get_container_host_ip()
     os.environ["DB_PORT"] = str(postgres.get_exposed_port(5432))
     os.environ["DB_USER"] = postgres.username
